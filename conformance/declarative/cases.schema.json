@@ -1,0 +1,466 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Declarative conformance fixture format (non-normative)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sources",
+    "cases"
+  ],
+  "properties": {
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "manifest"
+        ],
+        "properties": {
+          "manifest": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "poster": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "playable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "detail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "playables"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "playables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/playable"
+          }
+        },
+        "poster": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "mimeType": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "home": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "categories",
+        "items"
+      ],
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/category"
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/content"
+          }
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items",
+        "page",
+        "hasMore"
+      ],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/content"
+          }
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "hasMore": {
+          "const": false
+        }
+      }
+    },
+    "grants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network",
+        "cookies",
+        "storage"
+      ],
+      "properties": {
+        "network": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "cookies": {
+          "type": "boolean"
+        },
+        "storage": {
+          "type": "boolean"
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "home": {
+          "$ref": "#/$defs/home"
+        },
+        "category": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/content"
+            }
+          }
+        },
+        "search": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/content"
+            }
+          }
+        },
+        "detail": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/detail"
+          }
+        },
+        "play": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/resource"
+          }
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "operation",
+        "input",
+        "grants",
+        "expect"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operation": {
+          "enum": [
+            "home",
+            "category",
+            "search",
+            "detail",
+            "play"
+          ]
+        },
+        "input": {},
+        "grants": {
+          "$ref": "#/$defs/grants"
+        },
+        "expect": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "result"
+              ],
+              "properties": {
+                "result": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "errorCode"
+              ],
+              "properties": {
+                "errorCode": {
+                  "enum": [
+                    "INVALID_ARGUMENT",
+                    "NOT_FOUND",
+                    "UNSUPPORTED_OPERATION",
+                    "PERMISSION_DENIED"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "home"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "result": {
+                    "properties": {
+                      "data": {
+                        "$ref": "#/$defs/home"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "category"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "result": {
+                    "properties": {
+                      "data": {
+                        "$ref": "#/$defs/page"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "search"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "result": {
+                    "properties": {
+                      "data": {
+                        "$ref": "#/$defs/page"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "detail"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "result": {
+                    "properties": {
+                      "data": {
+                        "$ref": "#/$defs/detail"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "play"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expect": {
+                "properties": {
+                  "result": {
+                    "properties": {
+                      "data": {
+                        "$ref": "#/$defs/resource"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

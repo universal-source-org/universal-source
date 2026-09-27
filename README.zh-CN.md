@@ -62,7 +62,7 @@ TVBox、FongMi、drpy、XBPQ 和 XYQ 是既有生态和灵感来源。它们提�
 | [`spec/`](./spec/README.md) | 独立规范、清单 Schema 和 RFC。 |
 | `runtime/` | 为未来参考运行时预留。 |
 | [`examples/`](./examples/json/minimal/README.md) | 展示契约的小型源示例。 |
-| [`conformance/`](./conformance/README.md) | 清单 Schema 验证和测试样本；源操作一致性检查尚待实现。 |
+| [`conformance/`](./conformance/README.md) | 清单 Schema 验证和声明式操作测试样本；运行时执行检查尚待实现。 |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | 项目章程、设计原则、当前架构、路线图、决策记录和任务计划。 |
 
 建议先阅读[规范索引](./spec/README.md)，再查看[示例清单和源](./examples/json/minimal/README.md)。示例媒体地址只是占位符，阅读示例不需要网络访问。目前没有可执行示例的运行时命令。

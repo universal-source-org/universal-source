@@ -18,13 +18,13 @@ Tiny corrections can skip a standalone plan; the scope, validation, and diff-rev
 
 ## Validation in the current repository
 
-The repository contains a specification draft, JSON Schema, static example, and [manifest schema conformance workflow](conformance/README.md). After the documented development-environment setup, run from the repository root:
+The repository contains a specification draft, JSON Schema, static example, and [conformance workflow](conformance/README.md). After the documented development-environment setup, run from the repository root:
 
 ```sh
 python -m unittest discover -s conformance -p 'test_*.py' -v
 ```
 
-This uses a real Draft 2020-12 validator to check the schema, positive/negative manifest fixtures, and the existing example manifest. There is no executable source runtime or operation-level conformance harness yet. Do not describe schema checks as tested source execution.
+This uses a real Draft 2020-12 validator to check the schema, positive/negative manifest fixtures, and the existing example manifest. It also validates the [declarative operation fixtures](conformance/declarative/README.md), their source references, effective grants, and stored success snapshots. There is no executable source runtime or operation-level execution harness yet. Do not describe schema checks as tested source execution.
 
 For documentation work, check relative links (including anchors when used), Markdown structure, whitespace, and consistency with the specification. Parse JSON examples when touched. Distinguish structural manifest validation from the prose's semantic requirements, as listed in the conformance guide. The [roadmap](docs/ROADMAP.md) records remaining validation work; keep these instructions aligned with available commands.
 

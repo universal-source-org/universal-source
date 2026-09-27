@@ -1,0 +1,765 @@
+{
+  "sources": {
+    "minimal": {
+      "manifest": "examples/json/minimal/manifest.json"
+    },
+    "empty-home": {
+      "manifest": "conformance/declarative/sources/empty-home/manifest.json"
+    }
+  },
+  "cases": [
+    {
+      "id": "home-normal",
+      "source": "minimal",
+      "operation": "home",
+      "input": {},
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "categories": [
+              {
+                "id": "all",
+                "name": "All content"
+              }
+            ],
+            "items": [
+              {
+                "id": "demo",
+                "title": "Demo video"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "home-empty",
+      "source": "empty-home",
+      "operation": "home",
+      "input": {},
+      "grants": {
+        "network": [],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "categories": [],
+            "items": []
+          }
+        }
+      }
+    },
+    {
+      "id": "home-with-denied-network",
+      "source": "minimal",
+      "operation": "home",
+      "input": {},
+      "grants": {
+        "network": [],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "categories": [
+              {
+                "id": "all",
+                "name": "All content"
+              }
+            ],
+            "items": [
+              {
+                "id": "demo",
+                "title": "Demo video"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "home-unknown-input-field",
+      "source": "minimal",
+      "operation": "home",
+      "input": {
+        "extra": true
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "category-page-one",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": 1
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "id": "demo",
+                "title": "Demo video"
+              }
+            ],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "category-default-page",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "id": "demo",
+                "title": "Demo video"
+              }
+            ],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "category-past-end",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": 2
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [],
+            "page": 2,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "category-unknown",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "missing",
+        "page": 1
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "NOT_FOUND"
+      }
+    },
+    {
+      "id": "category-unknown-past-end",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "missing",
+        "page": 2
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "NOT_FOUND"
+      }
+    },
+    {
+      "id": "category-page-zero",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": 0
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "category-page-fraction",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": 1.5
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "category-page-null",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": null
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "category-page-string",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": "1"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "category-page-too-large",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": 9007199254740992
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "category-largest-page",
+      "source": "minimal",
+      "operation": "category",
+      "input": {
+        "id": "all",
+        "page": 9007199254740991
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [],
+            "page": 9007199254740991,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-exact",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": "demo",
+        "page": 1
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "id": "demo",
+                "title": "Demo video"
+              }
+            ],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-default-page",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": "demo"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [
+              {
+                "id": "demo",
+                "title": "Demo video"
+              }
+            ],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-no-match",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": "missing",
+        "page": 1
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-case-sensitive",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": "Demo",
+        "page": 1
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-no-trimming",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": " demo ",
+        "page": 1
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [],
+            "page": 1,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-past-end",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": "demo",
+        "page": 2
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "items": [],
+            "page": 2,
+            "hasMore": false
+          }
+        }
+      }
+    },
+    {
+      "id": "search-empty-query",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": ""
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "search-whitespace-query",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": " \t\r\n"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "search-missing-query",
+      "source": "minimal",
+      "operation": "search",
+      "input": {},
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "search-invalid-page",
+      "source": "minimal",
+      "operation": "search",
+      "input": {
+        "query": "demo",
+        "page": 0
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "detail-known",
+      "source": "minimal",
+      "operation": "detail",
+      "input": {
+        "id": "demo"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "id": "demo",
+            "title": "Demo video",
+            "description": "A static example with a placeholder media resource.",
+            "playables": [
+              {
+                "id": "demo-main",
+                "title": "Main resource"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "detail-unknown",
+      "source": "minimal",
+      "operation": "detail",
+      "input": {
+        "id": "missing"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "NOT_FOUND"
+      }
+    },
+    {
+      "id": "detail-empty-id",
+      "source": "minimal",
+      "operation": "detail",
+      "input": {
+        "id": ""
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "INVALID_ARGUMENT"
+      }
+    },
+    {
+      "id": "play-known-permitted",
+      "source": "minimal",
+      "operation": "play",
+      "input": {
+        "id": "demo-main"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "result": {
+          "ok": true,
+          "data": {
+            "url": "https://media.example.invalid/demo.mp4",
+            "mimeType": "video/mp4"
+          }
+        }
+      }
+    },
+    {
+      "id": "play-unknown",
+      "source": "minimal",
+      "operation": "play",
+      "input": {
+        "id": "missing"
+      },
+      "grants": {
+        "network": [
+          "https://media.example.invalid"
+        ],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "NOT_FOUND"
+      }
+    },
+    {
+      "id": "play-known-denied",
+      "source": "minimal",
+      "operation": "play",
+      "input": {
+        "id": "demo-main"
+      },
+      "grants": {
+        "network": [],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "PERMISSION_DENIED"
+      }
+    },
+    {
+      "id": "play-unknown-denied",
+      "source": "minimal",
+      "operation": "play",
+      "input": {
+        "id": "missing"
+      },
+      "grants": {
+        "network": [],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "NOT_FOUND"
+      }
+    },
+    {
+      "id": "search-undeclared",
+      "source": "empty-home",
+      "operation": "search",
+      "input": {
+        "query": "demo"
+      },
+      "grants": {
+        "network": [],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "UNSUPPORTED_OPERATION"
+      }
+    },
+    {
+      "id": "search-undeclared-invalid-input",
+      "source": "empty-home",
+      "operation": "search",
+      "input": {},
+      "grants": {
+        "network": [],
+        "cookies": false,
+        "storage": false
+      },
+      "expect": {
+        "errorCode": "UNSUPPORTED_OPERATION"
+      }
+    }
+  ]
+}

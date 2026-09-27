@@ -27,15 +27,15 @@ Status: **Active; draft foundation present**.
 
 Goals: make the existing minimal contract internally consistent and independently testable without selecting a runtime language or expanding the five-operation scope.
 
-Already present: English and Chinese introductions, [specification documents](../spec/README.md), [manifest schema](../spec/schema/manifest.schema.json), [static example](../examples/json/minimal/README.md), [RFC template](../spec/rfcs/0000-template.md), and [manifest conformance fixtures and command](../conformance/README.md). The command checks the schema, seven positive fixtures, 34 negative fixtures, and the example manifest using Draft 2020-12. Exact JavaScript and host-service bindings remain documented gaps.
+Already present: English and Chinese introductions, [specification documents](../spec/README.md), [manifest schema](../spec/schema/manifest.schema.json), [static example](../examples/json/minimal/README.md), [RFC template](../spec/rfcs/0000-template.md), and [manifest conformance fixtures and command](../conformance/README.md). The command checks the schema, seven positive fixtures, 34 negative fixtures, and the example manifest using Draft 2020-12. The [34 declarative operation cases](../conformance/declarative/README.md) now cover independent ready-instance calls, with structural/reference validation only. The [scoped contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement, unresolved issues, dynamic-origin pressure, and deferred Phase 3 bindings.
 
 Exit criteria:
 
-- Review the existing operation, manifest, lifecycle, permission, and compatibility contracts together; record unresolved issues without silently redesigning them.
-- Add deterministic valid/invalid manifest fixtures and declarative input/expected-result cases under `conformance/`, including failures and edge cases. **Manifest fixtures are present; declarative operation cases remain.**
+- Review the existing operation, manifest, lifecycle, permission, and compatibility contracts together; record unresolved issues without silently redesigning them. **Ready-instance declarative review complete; consolidated review of load diagnostics, cancellation, limits, multi-instance state, full origin/URL semantics, and version/extension handling remains. Include disposition or explicit deferral of recorded issues U1/U2 and pressure P1.**
+- Add deterministic valid/invalid manifest fixtures and declarative input/expected-result cases under `conformance/`, including failures and edge cases. **Complete for the initial corpus: manifest fixtures and 34 declarative operation cases are present. Actual operation execution belongs to Phase 2.**
 - Provide a documented, repeatable way to validate schema structure and manifest fixtures with a standards-compliant validator; distinguish schema checks from semantic checks. **Complete for the current manifest schema and corpus.**
-- Verify the example against the documented contract and identify which cases require a future runtime harness.
-- Record the scope of deferred JavaScript and host-service binding work for Phase 3. A reviewed draft baseline and its limitations are identifiable in Git.
+- Verify the example against the documented contract and identify which cases require a future runtime harness. **Complete by static inspection and fixture consistency checks; all operation cases require future Phase 2 execution.**
+- Record the scope of deferred JavaScript and host-service binding work for Phase 3. A reviewed draft baseline and its limitations are identifiable in Git. **Binding handoff scope is recorded in the scoped review; the final consolidated draft-baseline readiness record remains after the broader review.**
 
 ## Phase 2 — Declarative reference runtime
 
@@ -103,4 +103,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Add declarative input/expected-result fixtures for the existing five-operation contract, including defaults, empty results, unknown IDs, and denied media origins. Document the expected outcomes and which require a future runtime harness; do not implement source execution. Continue the cross-document contract review and record unresolved issues explicitly. This advances the remaining Phase 1 criteria; runtime implementation remains Phase 2 work.
+Complete the remaining cross-document consistency review listed in Phase 1, record dispositions or explicit deferrals for U1/U2 and dynamic-origin pressure P1, and commit a consolidated draft-baseline readiness record with limitations and the Phase 3 binding handoff. Reassess Phase 1 exit criteria then; do not implement a runtime or silently amend the contract during that review.

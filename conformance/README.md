@@ -1,6 +1,6 @@
-# Manifest schema conformance
+# Conformance fixtures and validation
 
-This workflow checks the existing [v0.1 manifest schema](../spec/schema/manifest.schema.json), seven schema-valid manifests, 34 schema-invalid manifests, and the [minimal example manifest](../examples/json/minimal/manifest.json). It does not load or execute sources.
+This workflow checks the existing [v0.1 manifest schema](../spec/schema/manifest.schema.json), seven schema-valid manifests, 34 schema-invalid manifests, and the [minimal example manifest](../examples/json/minimal/manifest.json). The same command also validates [34 declarative operation cases](declarative/README.md) and their source context. It does not execute source operations.
 
 ## Setup
 
@@ -34,9 +34,9 @@ If activation is unavailable, use `.venv/bin/python` on macOS/Linux or `.venv\Sc
 
 [`test_manifests.py`](test_manifests.py) uses the library's [Draft202012Validator](https://python-jsonschema.readthedocs.io/en/stable/validate/) directly. It checks the declared dialect and validates the schema against its Draft 2020-12 metaschema before checking any manifests. It then checks that every valid fixture and the existing example pass, and every invalid fixture is rejected.
 
-Success ends with `Ran 3 tests` and `OK`: those three test groups cover all 41 fixtures and the example. Each fixture is a named subtest, so a failure identifies its file. A mismatch, missing example, empty/missing fixture group, invalid schema, or malformed JSON exits nonzero. A malformed negative fixture does not count as successful schema rejection. JSON decoding also rejects duplicate object members and non-JSON constants such as `NaN`.
+The three manifest test groups cover all 41 manifest fixtures and the example. Together with the three declarative fixture-consistency groups, the command currently ends with `Ran 6 tests` and `OK`. Each fixture is a named subtest, so a failure identifies its file. A mismatch, missing example, empty/missing fixture group, invalid schema, or malformed JSON exits nonzero. A malformed negative fixture does not count as successful schema rejection. JSON decoding also rejects duplicate object members and non-JSON constants such as `NaN`.
 
-The workflow checks structural schema conformance, not full source validity. The fixtures are standalone manifests with illustrative entries; no corresponding source files are provided or executed. A schema-valid JavaScript manifest does not demonstrate JavaScript engine support. Negative fixtures are valid JSON intended to fail schema validation, and their expected constraints are listed below.
+The manifest tests check structural schema conformance, not full source validity. The manifest fixtures are standalone manifests with illustrative entries; no corresponding source files are provided or executed. A schema-valid JavaScript manifest does not demonstrate JavaScript engine support. Negative fixtures are valid JSON intended to fail schema validation, and their expected constraints are listed below.
 
 ## Valid fixtures
 
@@ -89,15 +89,15 @@ The workflow checks structural schema conformance, not full source validity. The
 | [entry-trailing-newline](invalid/manifests/entry-trailing-newline.json) | Entry pattern matches the entire string. |
 | [id-trailing-newline](invalid/manifests/id-trailing-newline.json) | ID pattern matches the entire string. |
 
-## Semantic checks still outside this workflow
+## Beyond manifest schema validation
 
-The [specification index](../spec/README.md), [Host API](../spec/host-api.md), and [Source API](../spec/source-api.md) require additional checks that the manifest schema does not claim to perform:
+The [specification index](../spec/README.md), [Host API](../spec/host-api.md), and [Source API](../spec/source-api.md) require additional checks that the manifest schema does not claim to perform. The declarative fixture tests check a subset for their two known contexts; they are not a general source validator:
 
 - Entry-file existence and containment after resolving symbolic links.
 - Full origin parsing, valid hosts and ports, normalization, default-port omission, and semantic duplicate detection. For example, the coarse schema pattern can accept port `99999` or an explicitly written default port even though normative prose rejects them. Such schema acceptance is not a contract contradiction: the specification explicitly requires additional semantic checks.
 - Source operation implementation, declarative entry shapes, and cross-references.
 - Host-service availability, effective permission grants, redirects, isolation, and lifecycle enforcement.
 
-No origin is contacted, and no manifest permission is granted by this command. It does not verify the example's runtime outputs, code execution, codec support, or platform interoperability. Declarative input/expected-result cases and a future execution harness remain separate work.
+No origin is contacted, and no manifest permission is granted by this command. It does not verify the example's runtime outputs, code execution, codec support, or platform interoperability. Declarative input/expected-result cases now exist as [authored fixtures](declarative/README.md); their validation checks stored data and references, not actual execution. A future Phase 2 harness must run them.
 
 To add a fixture, put a plain UTF-8 JSON file directly in `valid/manifests/` or `invalid/manifests/`, describe its purpose here, and run the command. Keep schema-negative cases focused on one requirement where possible. If a genuine schema/prose contradiction is found, report it for explicit resolution instead of weakening the test or silently changing the contract.
