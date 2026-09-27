@@ -12,7 +12,7 @@ This is a snapshot of the repository's current state, not a proposed implementat
 | Host boundary | Partially specified | [Host API](../spec/host-api.md) defines service responsibilities and permission boundaries. Exact service signatures and algorithm profiles remain open. |
 | Lifecycle and versioning | Specified as draft contracts | [Lifecycle](../spec/lifecycle.md) and [compatibility](../spec/compatibility.md) define expected behavior; no runtime enforces it yet. |
 | Declarative example | Static data present | [Minimal source](../examples/json/minimal/README.md) demonstrates all five operations with a placeholder media URL. The [operation corpus](../conformance/declarative/README.md) references it directly; no source-operation execution harness exists. |
-| Reference runtime | Planned, not implemented | No runtime source code, executable, build configuration, or selected implementation language. |
+| Reference runtime | Phase 2 active; not implemented | No runtime source code, executable, build configuration, or selected implementation language. |
 | JavaScript execution | Target named; binding and implementation pending | The manifest accepts `javascript`, but no interoperable module/async binding or engine implementation exists. |
 | Legacy adapters | Planned, not implemented | The compatibility document defines their boundary; no importer or adapter exists. |
 | Platform integrations | Planned proof, not implemented | No Android, Apple, desktop, or TV runtime integration is implemented. |
@@ -44,4 +44,4 @@ Local scaffolding may contain empty runtime, language-binding, or conformance di
 
 [ADR 0001](decisions/0001-initial-architecture.md) records the monorepo, platform-neutral contract, initial engines, and adapter boundary. Rust is a candidate for a future shared reference core, not a selected dependency or standard requirement. WASM has no current architecture beyond being deferred research. Specific runtime structure, dependency choices, and platform bindings need evidence and a scoped decision when their roadmap phase is active.
 
-The [declarative contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement, unresolved lifecycle/result-validation outcomes, deferred bindings, and dynamic-origin permission pressure. These observations do not amend the contract.
+The [declarative contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement and the Phase 3 binding handoff. The [Phase 1 closure review](reviews/2026-09-28-phase-1-closure-review.md) completes the joint contract audit, identifies the reviewed Git baseline, and explicitly defers non-ready reporting, combined result-error precedence, dynamic-origin expansion, and remaining host-policy/parser questions. Phase 1 is complete and Phase 2 is active; no runtime implementation or stable release is implied. These reviews do not amend the contract.

@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current active phase: Phase 1 — Specification v0.1.** Phase 0 is complete with the repository governance foundation. Phase 1 already has a substantial draft, manifest schema, RFC template, and static example; it is not starting from zero.
+**Current active phase: Phase 2 — Declarative reference runtime.** Phases 0 and 1 are complete. The [closure review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline, explicit deferrals, and implementation boundaries. No runtime has been implemented and v0.1 is not stable or released.
 
 This roadmap sequences work, not release dates or permission to implement future phases. Keep completed work intact. Update phase status and supporting evidence when exit criteria are met. A phase transition is a deliberate repository update; it never implies a tag, release, push, or repository-setting change.
 
@@ -23,7 +23,7 @@ Evidence: [agent guide](../AGENTS.md), [contribution workflow](../CONTRIBUTING.m
 
 ## Phase 1 — Specification v0.1
 
-Status: **Active; draft foundation present**.
+Status: **Complete; reviewed experimental draft baseline**.
 
 Goals: make the existing minimal contract internally consistent and independently testable without selecting a runtime language or expanding the five-operation scope.
 
@@ -31,17 +31,19 @@ Already present: English and Chinese introductions, [specification documents](..
 
 Exit criteria:
 
-- Review the existing operation, manifest, lifecycle, permission, and compatibility contracts together; record unresolved issues without silently redesigning them. **Ready-instance declarative review complete; consolidated review of load diagnostics, cancellation, limits, multi-instance state, full origin/URL semantics, and version/extension handling remains. Include disposition or explicit deferral of recorded issues U1/U2 and pressure P1.**
+- Review the existing operation, manifest, lifecycle, permission, and compatibility contracts together; record unresolved issues without silently redesigning them. **Complete in the [closure review](reviews/2026-09-28-phase-1-closure-review.md), including load diagnostics, cancellation, limits, multi-instance state, origin/URL semantics, version/extension handling, and explicit U1/U2/P1 deferrals. No Phase 2 blocker remains.**
 - Add deterministic valid/invalid manifest fixtures and declarative input/expected-result cases under `conformance/`, including failures and edge cases. **Complete for the initial corpus: manifest fixtures and 34 declarative operation cases are present. Actual operation execution belongs to Phase 2.**
 - Provide a documented, repeatable way to validate schema structure and manifest fixtures with a standards-compliant validator; distinguish schema checks from semantic checks. **Complete for the current manifest schema and corpus.**
 - Verify the example against the documented contract and identify which cases require a future runtime harness. **Complete by static inspection and fixture consistency checks; all operation cases require future Phase 2 execution.**
-- Record the scope of deferred JavaScript and host-service binding work for Phase 3. A reviewed draft baseline and its limitations are identifiable in Git. **Binding handoff scope is recorded in the scoped review; the final consolidated draft-baseline readiness record remains after the broader review.**
+- Record the scope of deferred JavaScript and host-service binding work for Phase 3. A reviewed draft baseline and its limitations are identifiable in Git. **Complete: the scoped review records the binding handoff, and the closure review identifies the audited Git baseline, closure commit, limitations, and allowed implementation choices. No normative contract changes were required.**
 
 ## Phase 2 — Declarative reference runtime
 
-Status: **Planned; no implementation**.
+Status: **Active; no implementation yet**.
 
 Goals: implement the existing static declarative contract as the first small reference runtime. Choose an implementation language through a scoped decision; Rust is a candidate, not a prerequisite.
+
+Use the [closure handoff](reviews/2026-09-28-phase-1-closure-review.md#phase-2-implementation-boundary) when designing the loader and harness. Deferred reporting/precedence/parser questions are not permission to invent portable behavior; document implementation policies and keep them distinct from contract assertions.
 
 Exit criteria:
 
@@ -103,4 +105,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Complete the remaining cross-document consistency review listed in Phase 1, record dispositions or explicit deferrals for U1/U2 and dynamic-origin pressure P1, and commit a consolidated draft-baseline readiness record with limitations and the Phase 3 binding handoff. Reassess Phase 1 exit criteria then; do not implement a runtime or silently amend the contract during that review.
+Record a scoped ADR choosing the reference implementation language, then implement and test only the static source loader: manifest/schema/semantic validation, contained entry resolution, complete stored-data/reference checks, finite load limits, and distinguishable host-facing diagnostics. Document the targeted draft commit and host policies. Keep operation dispatch and its execution harness for the next unit; do not add JavaScript, network consumers, adapters, WASM, or platform apps. Passing loader tests alone does not complete Phase 2.

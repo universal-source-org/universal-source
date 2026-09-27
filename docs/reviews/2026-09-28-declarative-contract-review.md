@@ -2,6 +2,8 @@
 
 Status: scoped Phase 1 review; observations and unresolved issues, **not normative changes or accepted design decisions**.
 
+Follow-up: the [Phase 1 closure review](2026-09-28-phase-1-closure-review.md) records the current dispositions of U1/U2/P1 and the consolidated readiness assessment. The findings and follow-up below preserve this earlier review's scope and historical status; the [roadmap](../ROADMAP.md) owns current phase status.
+
 Reviewed the [specification index](../../spec/README.md), [Source API](../../spec/source-api.md), [Host API](../../spec/host-api.md), [lifecycle](../../spec/lifecycle.md), [compatibility](../../spec/compatibility.md), manifest schema, and [minimal example](../../examples/json/minimal/README.md) for independent static declarative calls. The [34 operation cases](../../conformance/declarative/README.md) record only outcomes determined by these documents. No specification or example files were changed.
 
 ## Agreement demonstrated by inspection and fixture checks
