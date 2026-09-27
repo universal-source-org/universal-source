@@ -1,0 +1,24 @@
+{
+  "specVersion": "0.1",
+  "id": "org.example.minimal",
+  "name": "Minimal static source",
+  "engine": "declarative",
+  "entry": "source.json",
+  "permissions": {
+    "network": [
+      "https://media.example.invalid"
+    ],
+    "cookies": false,
+    "storage": false
+  },
+  "capabilities": {
+    "operations": [
+      "home",
+      "category",
+      "search",
+      "detail",
+      "play"
+    ],
+    "host": []
+  }
+}

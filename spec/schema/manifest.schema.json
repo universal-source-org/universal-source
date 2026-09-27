@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Universal Source v0.1 manifest",
+  "description": "Experimental v0.1 draft. Structural validation only; spec/README.md and spec/host-api.md define additional semantic checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "id",
+    "name",
+    "engine",
+    "entry",
+    "permissions",
+    "capabilities"
+  ],
+  "properties": {
+    "specVersion": {
+      "const": "0.1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:\\.[a-z][a-z0-9]*(?:-[a-z0-9]+)*)+(?![\\s\\S])",
+      "description": "Stable lowercase dotted identifier. Does not prove publisher identity."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engine": {
+      "enum": [
+        "declarative",
+        "javascript"
+      ]
+    },
+    "entry": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_][A-Za-z0-9_.-]*(?:/[A-Za-z0-9_][A-Za-z0-9_.-]*)*(?![\\s\\S])",
+      "description": "Contained relative path; runtime must also check resolved containment and file existence."
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network",
+        "cookies",
+        "storage"
+      ],
+      "properties": {
+        "network": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^https?://(?:[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?|\\[[0-9a-f:]+\\])(?::[1-9][0-9]{0,4})?(?![\\s\\S])",
+            "description": "Exact origin, no slash or wildcard. Host/port validity, normalization, and semantic uniqueness require additional checks."
+          }
+        },
+        "cookies": {
+          "type": "boolean"
+        },
+        "storage": {
+          "type": "boolean"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operations",
+        "host"
+      ],
+      "properties": {
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "home",
+              "category",
+              "search",
+              "detail",
+              "play"
+            ]
+          }
+        },
+        "host": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "http",
+              "cookies",
+              "storage",
+              "html",
+              "json",
+              "crypto",
+              "url",
+              "log"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "engine": {
+            "const": "declarative"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "entry": {
+            "pattern": "\\.json(?![\\s\\S])"
+          },
+          "capabilities": {
+            "properties": {
+              "host": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "entry": {
+            "pattern": "\\.js(?![\\s\\S])"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "host": {
+                "contains": {
+                  "enum": [
+                    "http",
+                    "cookies"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permissions": {
+            "properties": {
+              "network": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "host": {
+                "contains": {
+                  "const": "cookies"
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permissions": {
+            "properties": {
+              "cookies": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "permissions": {
+            "properties": {
+              "cookies": {
+                "const": true
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "host": {
+                "contains": {
+                  "const": "cookies"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "host": {
+                "contains": {
+                  "const": "storage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permissions": {
+            "properties": {
+              "storage": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "permissions": {
+            "properties": {
+              "storage": {
+                "const": true
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "capabilities": {
+            "properties": {
+              "host": {
+                "contains": {
+                  "const": "storage"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "home": {
+    "categories": [
+      {
+        "id": "all",
+        "name": "All content"
+      }
+    ],
+    "items": [
+      {
+        "id": "demo",
+        "title": "Demo video"
+      }
+    ]
+  },
+  "category": {
+    "all": [
+      {
+        "id": "demo",
+        "title": "Demo video"
+      }
+    ]
+  },
+  "search": {
+    "demo": [
+      {
+        "id": "demo",
+        "title": "Demo video"
+      }
+    ]
+  },
+  "detail": {
+    "demo": {
+      "id": "demo",
+      "title": "Demo video",
+      "description": "A static example with a placeholder media resource.",
+      "playables": [
+        {
+          "id": "demo-main",
+          "title": "Main resource"
+        }
+      ]
+    }
+  },
+  "play": {
+    "demo-main": {
+      "url": "https://media.example.invalid/demo.mp4",
+      "mimeType": "video/mp4"
+    }
+  }
+}

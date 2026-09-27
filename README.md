@@ -1,125 +1,72 @@
 # Universal Source
 
-**A portable specification for interoperable content sources across runtimes and platforms.**
+**Write once. Run everywhere.**
 
-[简体中文](./README.zh-CN.md)
+**A cross-platform specification and runtime for portable content sources.**
 
-Universal Source is an open project exploring a common contract for describing and executing content sources without binding them to a single application, runtime, or device ecosystem.
+[简体中文](./README.zh-CN.md) · [Specification v0.1 draft](./spec/README.md) · [Minimal JSON source](./examples/json/minimal/README.md)
 
-Today, many source definitions are tightly coupled to a particular host: they depend on private JavaScript APIs, application-specific JSON shapes, implicit runtime behavior, or undocumented conventions. That makes reuse difficult and turns every client into its own compatibility island.
+Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository currently contains a specification foundation and an example; a reference runtime has not been implemented.
 
-Universal Source aims to make the **source** portable.
+## The contract
 
-## What we want to achieve
+**The standard defines behavior and interfaces, not implementation language.** A source exposes a small set of operations:
 
-A Universal Source should be able to express **what a source needs to do** while leaving **how it is executed** to conforming runtimes.
+| Operation | Purpose |
+| --- | --- |
+| `home` | List entry categories and content. |
+| `category` | List a page of content in a category. |
+| `search` | Find a page of content matching a query. |
+| `detail` | Describe content and its playable items. |
+| `play` | Resolve a playable item to a media resource. |
 
-The project is being designed around a few principles:
-
-- **Portable** — one source definition should not belong to one app.
-- **Runtime-independent** — JavaScript, Rust, Go, Swift, Kotlin, and other implementations should be able to conform to the same contract.
-- **Backward-conscious** — existing source ecosystems matter; migration and compatibility should be treated as first-class problems.
-- **Capability-based** — sources declare what they need instead of assuming a specific host environment.
-- **Testable** — compatibility should be demonstrated against real-world source samples, not only described on paper.
-- **Minimal core, extensible edge** — standardize the smallest stable contract and allow capabilities to evolve without constantly breaking the core.
-
-## The problem
-
-A typical content source may need to:
-
-1. expose metadata,
-2. search,
-3. list or discover content,
-4. resolve detail pages,
-5. resolve playable resources,
-6. make network requests,
-7. parse structured or unstructured responses,
-8. persist small amounts of state,
-9. optionally execute controlled scripting.
-
-Different applications often model these operations differently. Even when two ecosystems both use JavaScript or JSON, their APIs are usually incompatible.
-
-Universal Source is an attempt to define a shared boundary between:
+The host supplies controlled services for HTTP, cookies, storage, HTML parsing, JSON, crypto, URL utilities, and logging. A source declares its operations, required host services, and requested permissions. Declarations do not grant access by themselves.
 
 ```text
-Source Definition
-      ↓
-Universal Source Contract
-      ↓
-Conforming Runtime
-      ↓
-App / TV / Mobile / Desktop / Server
+Declarative JSON or JavaScript source
+                  ↓
+     Universal Source Specification
+                  ↓
+          Conforming runtime
+                  ↓
+       Mobile / TV / Desktop host
 ```
 
-The goal is not to force every implementation to use the same programming language. The goal is to make them agree on the same observable contract.
+The specification is useful independently from the reference runtime. Implementations may use any language or platform that can preserve the contract.
 
-## Project status
+## v0.1 scope and status
 
-Universal Source is currently in the **early design stage**.
+This is an **experimental v0.1 draft**, not a release or a production compatibility promise. It defines a manifest, five source operations, shared data and error rules, host capability boundaries, a lifecycle, and a minimal static declarative format. JavaScript is an intended source engine; its execution binding and detailed host service profiles still need specification work before interoperable runtime implementations can be claimed.
 
-The specification, execution model, capability system, compatibility strategy, and real-world corpus are still being defined. APIs and terminology may change significantly before the first stable version.
+The architectural direction is:
 
-This repository is the public home of that work.
+1. A platform-neutral specification.
+2. Declarative JSON for simple sources, starting with static data.
+3. JavaScript for sources needing custom logic.
+4. Compatibility adapters for existing ecosystems.
 
-## Scope
+A shared runtime core may eventually use Rust, without making Rust part of the standard. WebAssembly may be explored later; it is not a v0.1 engine and is not implemented here.
 
-The initial work focuses on:
+v0.1 excludes recommendation systems, accounts, sync, DRM, subtitles, comments, danmaku, downloads, player UI, and platform-specific apps. The first version deliberately avoids a general scraping language, native plugins, and application-specific APIs.
 
-- source metadata and manifests,
-- request / response primitives,
-- search and discovery,
-- detail and resource resolution,
-- runtime capabilities and permissions,
-- deterministic error semantics,
-- compatibility with existing JavaScript- and JSON-based source formats,
-- a real-world compatibility corpus.
+## Existing ecosystems
 
-Non-goals will be documented explicitly as the design becomes more concrete.
+TVBox, FongMi, drpy, XBPQ, and XYQ are legacy and inspiration ecosystems. They provide useful compatibility cases, but do not define this project's identity or core API. Importers and adapters should reuse existing sources where reasonably possible and report unsupported behavior explicitly. Android APIs, Java/JAR loading, and legacy data conventions belong in compatibility layers, not in the new standard. No adapters are implemented or compatibility guarantees made yet.
 
-## A standard must earn compatibility
+## Repository
 
-A specification is only useful if implementations can agree on its behavior.
+This project stays in one monorepo:
 
-Universal Source therefore intends to treat real-world compatibility as part of the standardization process:
+| Directory | Purpose |
+| --- | --- |
+| [`spec/`](./spec/README.md) | Independent specification, manifest schema, and RFCs. |
+| `runtime/` | Reserved for future reference runtime work. |
+| [`examples/`](./examples/json/minimal/README.md) | Small sources illustrating the contract. |
+| `conformance/` | Reserved for fixtures and cross-implementation checks. |
+| `docs/` | Reserved for guides and architectural notes. |
 
-```text
-existing sources
-      ↓
-compatibility corpus
-      ↓
-conformance tests
-      ↓
-multiple runtimes
-      ↓
-same observable behavior
-```
-
-The long-term objective is simple:
-
-> Define once. Implement anywhere. Run sources across ecosystems.
-
-## Repository direction
-
-This repository will initially host the core project work while the design is still young. As stable boundaries emerge, specifications, conformance suites, runtimes, SDKs, and tooling may be split into dedicated repositories.
-
-Nothing is being split merely for appearance.
+Start with the [specification index](./spec/README.md), then read the [example manifest and source](./examples/json/minimal/README.md). The example uses a placeholder media URL and needs no network access to inspect. There is no runtime command to execute it yet.
 
 ## Contributing
 
-The project is at its most valuable stage for criticism.
-
-If you have experience building source systems, parsers, plugin runtimes, media clients, scraping infrastructure, sandboxed execution environments, or cross-platform SDKs, discussions and concrete compatibility cases are especially welcome.
-
-Before proposing a new abstraction, we want to answer three questions:
-
-1. What real-world problem does it solve?
-2. Can different runtimes implement it consistently?
-3. Can existing sources migrate to it without unreasonable friction?
-
-## Name
-
-**Universal Source** describes the intended boundary: a source format and execution contract that can outlive any single host application.
-
----
-
-Universal Source is experimental. The project does not yet claim stable compatibility, production readiness, or a finalized standard.
+Propose contract changes using the [RFC template](./spec/rfcs/0000-template.md). Explain the concrete use case, portable behavior, migration impact, and how independent implementations could test agreement. Small examples and documented legacy incompatibilities are more useful than speculative abstractions.
