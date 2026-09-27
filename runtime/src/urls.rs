@@ -73,19 +73,27 @@ pub(crate) fn origins(values: &[serde_json::Value]) -> Result<Vec<String>, ()> {
                 return Err(());
             }
         }
-        let host = match url.host().ok_or(())? {
-            Host::Domain(name) => name.to_owned(),
-            Host::Ipv4(ip) => ip.to_string(),
-            Host::Ipv6(ip) => format!("[{ip}]"),
-        };
-        let canonical = match url.port() {
-            Some(port) => format!("{scheme}://{host}:{port}"),
-            None => format!("{scheme}://{host}"),
-        };
+        let canonical = normalized_origin(&url)?;
         if !seen.insert(canonical.clone()) {
             return Err(());
         }
         normalized.push(canonical);
     }
     Ok(normalized)
+}
+
+fn normalized_origin(url: &Url) -> Result<String, ()> {
+    let host = match url.host().ok_or(())? {
+        Host::Domain(name) => name.to_owned(),
+        Host::Ipv4(ip) => ip.to_string(),
+        Host::Ipv6(ip) => format!("[{ip}]"),
+    };
+    Ok(match url.port() {
+        Some(port) => format!("{}://{host}:{port}", url.scheme()),
+        None => format!("{}://{host}", url.scheme()),
+    })
+}
+
+pub(crate) fn resource_origin(raw: &str) -> Result<String, ()> {
+    normalized_origin(&http_url(raw)?)
 }

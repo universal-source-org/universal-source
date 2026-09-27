@@ -6,7 +6,7 @@
 
 [简体中文](./README.zh-CN.md) · [Specification v0.1 draft](./spec/README.md) · [Minimal JSON source](./examples/json/minimal/README.md)
 
-Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative loader](./runtime/README.md). Operation dispatch and execution tests remain unimplemented.
+Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative runtime](./runtime/README.md) with loading, independent operation dispatch, returned-origin checks, and execution of 34 conformance cases. Broader lifecycle enforcement remains unfinished.
 
 ## The contract
 
@@ -60,12 +60,12 @@ This project stays in one monorepo:
 | Directory | Purpose |
 | --- | --- |
 | [`spec/`](./spec/README.md) | Independent specification, manifest schema, and RFCs. |
-| [`runtime/`](./runtime/README.md) | Rust static declarative loader and loading tests; no dispatch yet. |
+| [`runtime/`](./runtime/README.md) | Rust static loader, dispatcher, permission checks, and execution tests. |
 | [`examples/`](./examples/json/minimal/README.md) | Small sources illustrating the contract. |
-| [`conformance/`](./conformance/README.md) | Manifest validation and declarative operation fixtures; runtime execution checks are planned. |
+| [`conformance/`](./conformance/README.md) | Manifest validation and authored declarative fixtures executed by the Rust harness. |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | Project charter, principles, current architecture, roadmap, decisions, and task plans. |
 
-Start with the [specification index](./spec/README.md), then read the [example manifest and source](./examples/json/minimal/README.md). The example uses a placeholder media URL and needs no network access to inspect. There is no runtime command to execute it yet.
+Start with the [specification index](./spec/README.md), then read the [example manifest and source](./examples/json/minimal/README.md). The example uses a placeholder media URL and needs no network access to inspect. The [execution harness](./conformance/declarative/README.md#structural-validation-and-runtime-execution) runs its authored calls without network access or playback.
 
 ## Contributing
 

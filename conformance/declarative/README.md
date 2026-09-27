@@ -1,12 +1,12 @@
 # Declarative operation cases
 
-[`cases.json`](cases.json) contains **34 independent calls** with authored expected outcomes for the existing [v0.1 Source API](../../spec/source-api.md). These are test data for a future Phase 2 harness, not an executable source engine. All selected outcomes are deterministic under the preconditions below; no ambiguous behavior is assigned an invented result.
+[`cases.json`](cases.json) contains **34 independent calls** with authored expected outcomes for the existing [v0.1 Source API](../../spec/source-api.md). The Rust execution harness now runs these unchanged test data through the production loader and dispatcher. All selected outcomes are deterministic under the preconditions below; no ambiguous behavior is assigned an invented result.
 
 ## Context and execution preconditions
 
 The `sources` map names repository-relative manifest paths. `minimal` refers directly to the unchanged [minimal example](../../examples/json/minimal/README.md), not a copied source. `empty-home` refers to the [home-only manifest](sources/empty-home/manifest.json) and [entry](sources/empty-home/source.json) added here. Entry files are resolved relative to their manifests, as specified. These two contexts contain no scripts or host-service requirements.
 
-Each case assumes a fresh, successfully validated, ready declarative instance, adequate resource limits, no cancellation, and no host restrictions beyond its explicit effective `grants`. The future harness must support this profile and arrange these preconditions; failure to arrange them is a harness/setup failure, not a different expected operation result. Calls are independent, not a sequence. In particular, `detail` and `play` require no earlier `home` or other operation.
+Each case assumes a fresh, successfully validated, ready declarative instance, adequate resource limits, no cancellation, and no host restrictions beyond its explicit effective `grants`. The harness supports this profile and arranges these preconditions; failure to arrange them is a harness/setup failure, not a different expected operation result. Calls are independent, not a sequence. In particular, `detail` and `play` require no earlier `home` or other operation.
 
 `grants` repeats the existing permission shape (`network`, `cookies`, `storage`) as **fixture context**, not a new Source API argument. Grants are the effective authority for that case and never exceed the manifest request. Even successful resource resolution is only a return-value check: do not fetch the placeholder media URL or perform DNS, redirects, or playback. Denied network access does not prevent static `home` data without URLs from being returned.
 
@@ -16,10 +16,10 @@ Every case has `id`, `source`, `operation`, `input`, `grants`, and `expect`. The
 
 `expect` contains exactly one of:
 
-- `result`: the complete successful envelope `{"ok":true,"data":...}`. A future harness compares JSON values structurally, ignoring object member order but preserving array order, values, and the distinction between omitted members and `null`. It must not trim strings, normalize IDs, coerce types, or fill additional defaults. JSON integer representations such as `1` and `1.0` denote the same numeric value; strings and booleans are different types.
+- `result`: the complete successful envelope `{"ok":true,"data":...}`. The execution harness compares JSON values structurally, ignoring object member order but preserving array order, values, and the distinction between omitted members and `null`. It must not trim strings, normalize IDs, coerce types, or fill additional defaults. JSON integer representations such as `1` and `1.0` denote the same numeric value; strings and booleans are different types.
 - `errorCode`: the exact required Source API error code. This is an assertion descriptor, **not** a returned error envelope. The actual outcome must be `{"ok":false,"error":{"code":CODE,"message":TEXT}}`, with no `data` or unknown members. `TEXT` must be a nonempty diagnostic string meeting the Source API's confidentiality rules. Its wording is intentionally not compared; the contract does not standardize it.
 
-No runtime functions, module exports, callbacks, or transport protocol are prescribed. The future harness adapts these logical calls to its runtime boundary and separately checks actual envelopes. Fixture validation today does not provide that adapter or compare actual operation results.
+No runtime functions, module exports, callbacks, or transport protocol are prescribed. The Rust harness adapts these logical calls to its implementation-specific boundary and separately checks actual envelopes. Python fixture validation remains a distinct structural check.
 
 ## Cases and normative basis
 
@@ -47,7 +47,7 @@ No runtime functions, module exports, callbacks, or transport protocol are presc
 
 The known/permitted play case intentionally covers both known playable lookup and the allowed-origin result. The paired denied case changes only grants. The home-only source tests empty results and undeclared operations without mutating the example or inventing per-case source overrides.
 
-## Validation now and execution later
+## Structural validation and runtime execution
 
 Use the existing [development setup](../README.md#setup), then run from the repository root:
 
@@ -59,4 +59,10 @@ The command includes all existing manifest tests and [`test_declarative_fixtures
 
 The fixture schema's data definitions cover the shapes used here; they are not complete validators for all header, URL, origin, or arbitrary source semantics. The code's URL checks inspect the simple canonical origins used by these contexts and do not implement general origin normalization. Expected error codes and lookup/pagination behavior were reviewed against the prose; these are authored expectations, not results generated by an interpreter. The validator intentionally cannot prove that every authored input/outcome pair is behaviorally correct.
 
-**Every case still needs future Phase 2 execution** to demonstrate runtime conformance. No current test calls `home`, `category`, `search`, `detail`, or `play`. Runtime limits, cancellation, redirects, loading failures, and non-ready calls are outside this ready-instance corpus. The [scoped contract review](../../docs/reviews/2026-09-28-declarative-contract-review.md) records the original findings and deferred bindings; the [closure review](../../docs/reviews/2026-09-28-phase-1-closure-review.md) records their current dispositions and Phase 2 implementation boundaries, including the limits of fixture helpers as semantic validators.
+**All 34 cases now execute and pass through the Rust runtime.** Run from the repository root with the [runtime toolchain](../../runtime/README.md#build-and-validate):
+
+```sh
+cargo test --manifest-path runtime/Cargo.toml --locked --test declarative_conformance -- --nocapture
+```
+
+The [harness](../../runtime/tests/declarative_conformance.rs) freshly loads each context, establishes effective grants, invokes the requested operation, validates envelope exclusivity/closed shapes, and compares the authored success or error-code expectation. Each case ID is printed; all failures, including setup failures, fail the test. Message text is not fixed. Numeric comparison preserves equal JSON values such as `1`/`1.0` without type coercion. Expected outcomes are unchanged and not generated by the dispatcher. This is bounded ready-source execution evidence, not completion of Phase 2. Runtime limits, cancellation, redirects, loading failures, and non-ready calls are outside this ready-instance corpus. The [scoped contract review](../../docs/reviews/2026-09-28-declarative-contract-review.md) records the original findings and deferred bindings; the [closure review](../../docs/reviews/2026-09-28-phase-1-closure-review.md) records their current dispositions and Phase 2 implementation boundaries, including the limits of fixture helpers as semantic validators.

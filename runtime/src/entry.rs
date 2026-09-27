@@ -173,3 +173,59 @@ pub(crate) fn validate(entry: &Value, operations: &[Value]) -> Check<()> {
     }
     Ok(())
 }
+
+// Validate only the constructed success data, using the same type checks as
+// loading. References are checked against the already validated source maps.
+pub(crate) fn result(
+    operation: &str,
+    data: &Value,
+    input: &Value,
+    page: u64,
+    entry: &Value,
+) -> Check<()> {
+    match operation {
+        "home" => {
+            let home = fields(data, &["categories", "items"], &[])?;
+            references(
+                &records(&home["categories"], "name", &[])?,
+                entry.get("category").and_then(Value::as_object),
+            )?;
+            references(
+                &records(&home["items"], "title", &["poster"])?,
+                entry.get("detail").and_then(Value::as_object),
+            )?;
+        }
+        "category" | "search" => {
+            let obj = fields(data, &["items", "page", "hasMore"], &[])?;
+            if obj["page"].as_u64() != Some(page) || obj["hasMore"] != false {
+                return Err(());
+            }
+            references(
+                &records(&obj["items"], "title", &["poster"])?,
+                entry.get("detail").and_then(Value::as_object),
+            )?;
+        }
+        "detail" => {
+            let obj = fields(
+                data,
+                &["id", "title", "playables"],
+                &["poster", "description"],
+            )?;
+            if text(&obj["id"])? != input["id"].as_str().ok_or(())? {
+                return Err(());
+            }
+            text(&obj["title"])?;
+            poster(obj)?;
+            if let Some(description) = obj.get("description") {
+                description.as_str().ok_or(())?;
+            }
+            references(
+                &records(&obj["playables"], "title", &[])?,
+                entry.get("play").and_then(Value::as_object),
+            )?;
+        }
+        "play" => resource(data)?,
+        _ => return Err(()),
+    }
+    Ok(())
+}

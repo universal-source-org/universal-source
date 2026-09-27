@@ -7,22 +7,22 @@ This is a snapshot of the repository's current state, not a proposed implementat
 | Area | Current status | Evidence and limits |
 | --- | --- | --- |
 | Repository context | Present documentation | Charter, principles, roadmap, decisions, and contribution workflow in this monorepo. |
-| Source contract | Specified as an experimental draft | [Source API](../spec/source-api.md) defines exactly five operations, results, errors, and static declarative dispatch. No executing engine exists. |
+| Source contract | Specified as an experimental draft | [Source API](../spec/source-api.md) defines exactly five operations, results, errors, and static declarative dispatch. The Rust static profile executes independent ready-source calls. |
 | Manifest | Schema, prose, and validation tooling present | [Schema](../spec/schema/manifest.schema.json) covers structure; the [conformance workflow](../conformance/README.md) checks it and manifest fixtures with a real Draft 2020-12 validator. The Rust loader separately performs semantic manifest and static-entry validation. |
 | Host boundary | Partially specified | [Host API](../spec/host-api.md) defines service responsibilities and permission boundaries. Exact service signatures and algorithm profiles remain open. |
 | Lifecycle and versioning | Specified as draft contracts | [Lifecycle](../spec/lifecycle.md) and [compatibility](../spec/compatibility.md) define expected behavior; loading is implemented, while invocation lifecycle remains unimplemented. |
-| Declarative example | Static data present | [Minimal source](../examples/json/minimal/README.md) demonstrates all five operations with a placeholder media URL. The [operation corpus](../conformance/declarative/README.md) references it directly; no source-operation execution harness exists. |
-| Reference runtime | Phase 2 active; Rust loader implemented | [Loader library and tests](../runtime/README.md) validate static packages. No dispatch, operation execution harness, or platform binding exists. |
+| Declarative example | Static data present | [Minimal source](../examples/json/minimal/README.md) demonstrates all five operations with a placeholder media URL. The [operation corpus](../conformance/declarative/README.md) references it directly; all 34 ready-source cases execute through the Rust harness. |
+| Reference runtime | Phase 2 active; Rust loader and dispatcher implemented | [Runtime and tests](../runtime/README.md) load sources, dispatch five operations, and check returned origins. The execution harness runs 34 cases; no platform binding exists. |
 | JavaScript execution | Target named; binding and implementation pending | The manifest accepts `javascript`, but no interoperable module/async binding or engine implementation exists. |
 | Legacy adapters | Planned, not implemented | The compatibility document defines their boundary; no importer or adapter exists. |
 | Platform integrations | Planned proof, not implemented | No Android, Apple, desktop, or TV runtime integration is implemented. |
 | WASM | Exploratory only | No engine value, ABI, module loader, or WASM runtime architecture is defined or implemented. |
 
-The implemented runtime component is a **static declarative loader**, selected under [ADR 0002](decisions/0002-reference-runtime-language.md). Independent Python manifest/fixture checks remain development tooling. Recognizing an engine name in a manifest does not mean the engine runs; no operation dispatch or JavaScript execution exists.
+The implemented runtime is a **static declarative loader and ready-source dispatcher**, selected under [ADR 0002](decisions/0002-reference-runtime-language.md). Independent Python manifest/fixture checks remain development tooling. Recognizing an engine name in a manifest does not mean the engine runs; JavaScript execution does not exist.
 
 ## Contract boundaries that exist in the draft
 
-A source consists of a manifest and entry file. The manifest identifies its exact specification version, engine, operations, required host services, and requested permissions. The runtime is responsible for validation, isolation, invocation, and result validation on behalf of a host. The host grants authority and consumes results. Loading and static validation now have an implementation. Invocation, grants, and result-consumption responsibilities remain specified but unimplemented.
+A source consists of a manifest and entry file. The manifest identifies its exact specification version, engine, operations, required host services, and requested permissions. The runtime is responsible for validation, isolation, invocation, and result validation on behalf of a host. The host grants authority and consumes results. Loading and static validation now have an implementation. Independent invocation and returned-origin grant checks now exist. Complete invocation lifecycle and result consumers remain unimplemented.
 
 The initial operation vocabulary is `home`, `category`, `search`, `detail`, and `play`; individual sources may declare a subset under the existing manifest rules. The declarative profile describes static JSON lookups. It does not include a network scraping language. JavaScript is the other initial engine target, with its execution binding still open.
 
@@ -30,9 +30,15 @@ The host-service vocabulary covers HTTP, cookies, storage, HTML parsing, JSON, c
 
 ## Implemented loader boundary
 
-A single Rust library crate under `runtime/` reads a host-provided root into an immutable validated snapshot. It uses the authoritative manifest schema directly, strict duplicate-rejecting JSON decoding, separate origin checks, resolved file containment, and complete static shapes/references. Internal modules separate loading/diagnostics, JSON decoding, entry validation, and URL validation. These are implementation modules, not portable APIs or a plugin architecture.
+A single Rust library crate under `runtime/` reads a host-provided root into an immutable validated snapshot. It uses the authoritative manifest schema directly, strict duplicate-rejecting JSON decoding, separate origin checks, resolved file containment, and complete static shapes/references. Internal modules separate loading/diagnostics, JSON decoding, entry/result validation, URL validation, and static dispatch. These are implementation modules, not portable APIs or a plugin architecture.
 
-The [runtime guide](../runtime/README.md) records finite input/depth limits, diagnostic precedence, parser policies, and the requirement for a host-controlled filesystem tree stable during loading. Canonicalize/open is not a concurrent hostile-writer sandbox. Stored URLs do not need effective grants to be valid data; no consumer or result-time grant check is implemented. Snapshot loading is not yet a complete ready/call/dispose lifecycle.
+The [runtime guide](../runtime/README.md) records finite input/depth limits, diagnostic precedence, parser policies, and the requirement for a host-controlled filesystem tree stable during loading. Canonicalize/open is not a concurrent hostile-writer sandbox. Stored URLs do not need effective grants to be valid data. The dispatcher checks only URLs in actual returned results against both requests and current grants; no consumer is implemented. Snapshot loading is not yet a complete ready/call/dispose lifecycle.
+
+## Implemented ready-source call boundary
+
+`LoadedSource::invoke` accepts an operation name, JSON input and separate `EffectiveGrants` host context. It performs declaration-before-input checks, static lookup/default/page rules, result validation, and exact returned-origin enforcement, returning closed Source API envelopes. Calls return owned data and do not mutate the snapshot. There is no preceding-call requirement, lifecycle state machine, scheduler, cancellation or deadline support.
+
+The [Rust harness](../runtime/tests/declarative_conformance.rs) freshly loads each source for every authored case and checks the actual envelope against independent expected data. All 34 cases pass under their documented preconditions. This does not prove full lifecycle or consumer conformance. U1/U2 remain deferred; local structure-before-permission result checks and conservative trailing-dot origin comparison are implementation policies documented in the [runtime guide](../runtime/README.md).
 
 ## Repository layout
 
@@ -40,8 +46,8 @@ The [runtime guide](../runtime/README.md) records finite input/depth limits, dia
 | --- | --- |
 | `spec/` | Draft contracts, manifest schema, and RFC template. |
 | `examples/json/minimal/` | The one existing declarative example. |
-| `runtime/` | One Rust library crate, Cargo manifest/lockfile, loader modules, tests, and policy/build documentation. |
-| `conformance/` | Manifest fixtures and validation, declarative input/expected-result cases, fixture-consistency tests, and local command documentation. No source-operation execution harness yet. |
+| `runtime/` | One Rust library crate, Cargo manifest/lockfile, loader/dispatcher modules, focused tests, execution harness, and policy/build documentation. |
+| `conformance/` | Manifest fixtures and validation, declarative input/expected-result cases, fixture-consistency tests, and local command documentation. The Rust execution harness consumes the unchanged 34-case corpus. |
 | `docs/` | Durable project context, decisions, task plans, and scoped contract reviews. |
 
 Local scaffolding may contain empty runtime, language-binding, or conformance directories. Git does not preserve empty directories by itself; their names are neither implementations nor decisions to adopt a language or ABI. The plan directories have explicit `.gitkeep` files so their workflow locations survive cloning.
@@ -50,4 +56,4 @@ Local scaffolding may contain empty runtime, language-binding, or conformance di
 
 [ADR 0001](decisions/0001-initial-architecture.md) records the monorepo, platform-neutral contract, initial engines, and adapter boundary. [ADR 0002](decisions/0002-reference-runtime-language.md) selects Rust for the reference implementation; Rust remains outside the standard and source format. WASM has no current architecture beyond being deferred research. The loader and its dependencies are documented; further runtime structure and platform bindings still need evidence and scoped decisions.
 
-The [declarative contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement and the Phase 3 binding handoff. The [Phase 1 closure review](reviews/2026-09-28-phase-1-closure-review.md) completes the joint contract audit, identifies the reviewed Git baseline, and explicitly defers non-ready reporting, combined result-error precedence, dynamic-origin expansion, and remaining host-policy/parser questions. Phase 1 is complete and Phase 2 is active. The loader is the first implementation unit; it does not establish complete runtime conformance or a stable release. These reviews do not amend the contract.
+The [declarative contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement and the Phase 3 binding handoff. The [Phase 1 closure review](reviews/2026-09-28-phase-1-closure-review.md) completes the joint contract audit, identifies the reviewed Git baseline, and explicitly defers non-ready reporting, combined result-error precedence, dynamic-origin expansion, and remaining host-policy/parser questions. Phase 1 is complete and Phase 2 is active. Loading and ready-source execution are implemented; this does not establish complete runtime conformance or a stable release. These reviews do not amend the contract.

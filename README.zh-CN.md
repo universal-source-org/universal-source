@@ -6,7 +6,7 @@
 
 [English](./README.md) · [v0.1 规范草案](./spec/README.md) · [最小 JSON 源](./examples/json/minimal/README.md)
 
-Universal Source 的目标是让同一份内容源在 **Android、Android TV、iOS、iPadOS、tvOS、macOS、Windows 和 Linux** 上运行。这是项目目标，并不代表目前已支持这些平台。仓库当前提供经过审查的 v0.1 草案、示例、一致性测试数据，以及 [Rust 声明式源加载器](./runtime/README.md)。操作分发和操作执行测试尚未实现。
+Universal Source 的目标是让同一份内容源在 **Android、Android TV、iOS、iPadOS、tvOS、macOS、Windows 和 Linux** 上运行。这是项目目标，并不代表目前已支持这些平台。仓库当前提供经过审查的 v0.1 草案、示例、一致性测试数据，以及 [Rust 声明式运行时](./runtime/README.md)，支持加载、独立操作分发、返回 URL 的来源权限检查，并执行 34 个一致性案例。完整生命周期约束仍待实现。
 
 ## 核心契约
 
@@ -60,12 +60,12 @@ TVBox、FongMi、drpy、XBPQ 和 XYQ 是既有生态和灵感来源。它们提�
 | 目录 | 用途 |
 | --- | --- |
 | [`spec/`](./spec/README.md) | 独立规范、清单 Schema 和 RFC。 |
-| [`runtime/`](./runtime/README.md) | Rust 静态声明式源加载器和加载测试；尚无操作分发。 |
+| [`runtime/`](./runtime/README.md) | Rust 静态加载器、操作分发、权限检查与执行测试。 |
 | [`examples/`](./examples/json/minimal/README.md) | 展示契约的小型源示例。 |
-| [`conformance/`](./conformance/README.md) | 清单 Schema 验证和声明式操作测试样本；运行时执行检查尚待实现。 |
+| [`conformance/`](./conformance/README.md) | 清单 Schema 验证和由 Rust 测试框架执行的声明式操作样本。 |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | 项目章程、设计原则、当前架构、路线图、决策记录和任务计划。 |
 
-建议先阅读[规范索引](./spec/README.md)，再查看[示例清单和源](./examples/json/minimal/README.md)。示例媒体地址只是占位符，阅读示例不需要网络访问。目前没有可执行示例的运行时命令。
+建议先阅读[规范索引](./spec/README.md)，再查看[示例清单和源](./examples/json/minimal/README.md)。示例媒体地址只是占位符，阅读示例不需要网络访问。[执行测试框架](./conformance/declarative/README.md#structural-validation-and-runtime-execution)可运行预先编写的操作案例，不会访问网络或播放媒体。
 
 ## 参与贡献
 

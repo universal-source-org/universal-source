@@ -1,6 +1,6 @@
-# Declarative reference loader
+# Declarative reference runtime
 
-This Rust library loads and validates static declarative sources against the v0.1 draft reviewed at `e0613c5fe1e5d36f690e34c16893e45847217674`. It implements **loading only**. Phase 2 remains active: no operation dispatch, operation execution harness, grants, invocation lifecycle, or network consumers exist yet. [ADR 0002](../docs/decisions/0002-reference-runtime-language.md) selects Rust for this implementation, not for portable source packages.
+This Rust library loads and validates static declarative sources against the v0.1 draft reviewed at `e0613c5fe1e5d36f690e34c16893e45847217674`. It implements loading and **independent ready-source calls**, including returned-origin checks. The Rust harness executes all 34 authored cases. Phase 2 remains active: deadlines, cancellation, scheduling, disposal, and network consumers are not implemented. [ADR 0002](../docs/decisions/0002-reference-runtime-language.md) selects Rust for this implementation, not for portable source packages.
 
 ## Build and validate
 
@@ -34,7 +34,7 @@ The loader:
 5. Resolves the declared entry, verifies containment and regular-file status, applies entry/combined-input budgets, and parses it with the same strict JSON rules.
 6. Validates the exact declared operation keys, every stored shape, required/optional/unknown fields, map and array IDs, valid query keys, URL/header/media-type syntax, conditional cross-references, and consistent reuse of playable IDs across details.
 
-Successful loading establishes whole-entry validity. It is not yet an invocable ready instance: grants and invocation machinery are intentionally absent. Per [A1](../docs/reviews/2026-09-28-phase-1-closure-review.md#a1--fixture-validation-is-narrower-than-semantic-conformance), an otherwise valid stored URL may be outside requested origins. Such data is not rejected merely because a future result would be denied. Validation never fetches URLs, resolves DNS, follows redirects, or starts media access.
+Successful loading establishes whole-entry validity. The snapshot supports independent calls under the ready-source preconditions below; it is not a complete lifecycle-managed instance. Per [A1](../docs/reviews/2026-09-28-phase-1-closure-review.md#a1--fixture-validation-is-narrower-than-semantic-conformance), an otherwise valid stored URL may be outside requested origins. Such data is not rejected merely because a future result would be denied. Validation never fetches URLs, resolves DNS, follows redirects, or starts media access.
 
 ## Filesystem and load-budget policy
 
@@ -78,14 +78,44 @@ The following are implementation policies under [D2](../docs/reviews/2026-09-28-
 
 - Require an explicit `://` and nonempty authority for stored HTTP(S) URLs. Reject literal ASCII whitespace/control characters, backslashes, and any user-info delimiter, including empty credentials; percent-encoded path data is handled by the parser.
 - Validate parsed DNS labels as nonempty ASCII letters/digits/hyphens, at most 63 bytes each, with no edge hyphens and at most 253 bytes excluding a single terminal dot. The parser performs IDNA handling; Unicode resource hostnames may normalize to ASCII, while manifest origins must already use ASCII. Single-label hosts are not assumed to have a public suffix.
-- The authoritative manifest schema excludes trailing-dot origins; stored resource URLs may contain a single trailing DNS dot. Its future result-origin comparison needs to remain explicit in the parser policy. WHATWG numeric IPv4 forms normalize through the parser (for example `127.1` and `127.0.0.1` collide). IPv6 alternate spellings also collide. This is comparison of requested origins, not a grant expansion mechanism.
-- Stored resource URLs may include case differences, explicit default ports, paths, queries, and fragments when parsed as valid HTTP(S) URLs without credentials. Stored text is preserved, not rewritten. Syntax acceptance does not grant access. The future result validator must use consistent normalization, not string-prefix checks.
+- The authoritative manifest schema excludes trailing-dot origins; stored resource URLs may contain a single trailing DNS dot. Result-origin comparison preserves that dot, so it does not match a dotless requested origin. This conservative D2 policy does not grant additional authority. WHATWG numeric IPv4 forms normalize through the parser (for example `127.1` and `127.0.0.1` collide). IPv6 alternate spellings also collide. This is comparison of requested origins, not a grant expansion mechanism.
+- Stored resource URLs may include case differences, explicit default ports, paths, queries, and fragments when parsed as valid HTTP(S) URLs without credentials. Stored text is preserved, not rewritten. Syntax acceptance does not grant access. The result validator uses the same origin formatter as the loader, not string-prefix checks.
 - Media types use the `mime` parser and must be concrete types rather than wildcard ranges. Headers use HTTP token names, case-insensitive uniqueness, string values without CR/LF, and the six forbidden names in the Source API. No transport or cookie behavior is implemented.
 
 The schema validator is [`jsonschema`](https://docs.rs/jsonschema/0.58.1/jsonschema/) in Draft 2020-12 mode, with network/file retrieval disabled. Parser/library behavior outside the explicit rules remains a portability surface. Record concrete disagreements for review rather than treating this library's behavior as the specification.
 
-## Tests and remaining scope
+## Ready-source dispatch and effective grants
 
-Tests load both repository source contexts, reuse manifest fixtures, and exercise JSON/Unicode/duplicate rejection, schema-versus-semantic checks, diagnostic categories/precedence, containment and Unix symlinks, shapes and references, URLs/origins/headers, A1, independent snapshots, and limit boundaries. They do not execute any of the 34 operation cases. The independent Python suite continues to validate those authored cases as data.
+`LoadedSource::invoke(operation, &input, &grants) -> serde_json::Value` is an implementation-specific synchronous boundary, not a portable Rust binding. It assumes a successfully loaded, ready source, adequate resources, and no cancellation. The immutable snapshot is the only source data; results are owned copies. There is no scheduler or lifecycle state machine. Hosts remain responsible for serializing calls until the later lifecycle unit supplies that boundary. U1 non-ready/disposed reporting remains deferred.
 
-Still absent: dispatch, result envelopes/grant enforcement, operation-case execution, cancellation/disposal/serialization, consumers/redirects, host-service bindings, JavaScript, legacy adapters, platform applications, and WASM. No interoperability or platform-support certification is implied. The next coherent task is dispatch plus an execution harness for the existing declarative cases; it has not started here.
+Construct `EffectiveGrants::new(&source, &network_origins)` separately from operation input. It normalizes and validates exact origins with the loader's policy, rejects duplicates and authority beyond the manifest, and returns the host setup error `InvalidGrants` on failure. `EffectiveGrants::default()` denies all network access. Static sources have no cookie/storage authority. Grants are supplied afresh per call; no grant is cached in the snapshot. Returned URLs must match both the invoked source's requests and the effective grants, even if the grants object originated with another source.
+
+Call ordering is declaration/vocabulary, input, lookup, result shape/identity/reference validation, returned-origin checks, then envelope delivery. Unknown vocabulary strings and undeclared operations yield `UNSUPPORTED_OPERATION` before input checks. Inputs are closed objects; IDs remain opaque, and search rejects only the specified empty/whitespace-only queries. Pages default only when omitted and accept integer JSON numbers from 1 through 9007199254740991, including `1.0`; null, booleans, strings, fractions and out-of-range values fail without coercion.
+
+| Operation | Static behavior |
+| --- | --- |
+| `home` | Copies stored categories/items, including empty arrays. |
+| `category` | Looks up category before page handling; unknown is `NOT_FOUND`. Page 1 returns stored items, later pages empty. |
+| `search` | Exact case-sensitive lookup without trimming/normalization. Absent query or later page returns empty items. |
+| `detail` | Copies the stored detail, independently of preceding calls; unknown is `NOT_FOUND`. |
+| `play` | Looks up the stored resource before grants; unknown remains `NOT_FOUND` even with no grants. |
+
+Paged results preserve the effective page and use `hasMore: false`. Shape and reference validation reuses loader type checks. Invalid constructed data yields `INVALID_RESULT`. This local structure-before-permission order does not standardize U2 or add combined-violation conformance expectations. Envelopes are constructed with exactly `ok`/`data` or `ok`/`error`; errors contain only an existing code and fixed, nonempty message without source values. No new portable errors are introduced.
+
+Only typed returned URL fields are checked: list-item posters, detail posters, and play resource URLs. IDs, titles, descriptions and header values are not recursively interpreted as URLs. A denied URL rejects the entire result with `PERMISSION_DENIED`; nothing is stripped or fetched. An unreturned stored URL cannot deny an unrelated result, and a later empty page contains no poster to check. Origin parsing handles case/default ports/IPv6 consistently; scheme, subdomain and non-default port boundaries remain exact. Every future consumer must still recheck actual access and redirects; this implementation does not provide a consumer.
+
+## Execution harness and remaining scope
+
+From the repository root, run:
+
+```sh
+cargo test --manifest-path runtime/Cargo.toml --locked --test declarative_conformance -- --nocapture
+```
+
+The [harness](tests/declarative_conformance.rs) validates the fixture schema, checks the corpus count and unique IDs, and freshly loads the named source for each of the 34 cases using production code. It constructs effective grants, invokes the dispatcher, checks closed envelopes, and compares against the unchanged authored expectations. It prints `PASS`/`FAIL` with every case ID and fails the test if any case fails, including setup failures. Loader/grant failures are never converted to Source API results. Cookie/storage fixture grants must be false for this profile.
+
+The independent test comparator ignores object order, preserves array order/types/missing versus null, and compares serialized decimal numeric values so `1` and `1.0` match without collapsing adjacent large integers through floating-point conversion. Error codes are exact; message wording is not compared, but the field must be a nonempty string. Expected outcomes are never generated by the runtime. The Python suite remains independent structural validation of these data files.
+
+Rust tests now include the existing loader/schema tests, malformed-result unit checks, focused dispatcher/permission tests, the comparator test, and execution of all 34 cases. Coverage includes declaration precedence, input/default/page/lookup rules, exact search, known/unknown IDs, media/poster denial, normalized origins, per-call grants, and independent returned copies.
+
+Still absent: deadlines/cancellation/disposal/serialization, lifecycle health/retry enforcement, full invocation resource accounting, consumers/redirects, host-service bindings, JavaScript, legacy adapters, platform applications, and WASM. U1/U2 and the broader D1/D2 portability surfaces remain deferred. Only local macOS execution is demonstrated. Passing this corpus does not complete Phase 2 or certify all v0.1 behavior. The next coherent task is the remaining Phase 2 lifecycle/isolation unit; it has not started here.

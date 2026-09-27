@@ -1,4 +1,6 @@
-//! Loading and validation only. No dispatch, grants, source execution or network I/O.
+//! Static declarative loading and ready-source calls. No network I/O or lifecycle scheduler.
+mod dispatch;
+pub use dispatch::{EffectiveGrants, InvalidGrants};
 mod entry;
 mod json;
 mod urls;
@@ -58,7 +60,7 @@ impl Default for LoadLimits {
     }
 }
 
-/// Immutable validated data, not yet an invocable instance or permission grant.
+/// Immutable validated data supporting independent ready-source calls. Not a permission grant.
 /// Debug deliberately omits source data, which may contain credentials in headers.
 pub struct LoadedSource {
     manifest: Value,

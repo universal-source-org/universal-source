@@ -24,7 +24,7 @@ The repository contains a specification draft, JSON Schema, static example, and 
 python -m unittest discover -s conformance -p 'test_*.py' -v
 ```
 
-This uses a real Draft 2020-12 validator to check the schema, positive/negative manifest fixtures, and the existing example manifest. It also validates the [declarative operation fixtures](conformance/declarative/README.md), their source references, effective grants, and stored success snapshots. The [Rust loader](runtime/README.md) now validates static packages; operation dispatch and an operation execution harness remain unimplemented. Do not describe schema checks as tested source execution.
+This uses a real Draft 2020-12 validator to check the schema, positive/negative manifest fixtures, and the existing example manifest. It also validates the [declarative operation fixtures](conformance/declarative/README.md), their source references, effective grants, and stored success snapshots. The [Rust runtime](runtime/README.md) loads static packages, dispatches independent ready-source calls, enforces returned-origin grants, and executes the 34 operation cases. Broader lifecycle enforcement remains unimplemented. Do not describe schema checks as tested source execution.
 
 For runtime changes, use Rust/Cargo 1.96 or newer and run:
 
@@ -35,7 +35,7 @@ cargo fmt --manifest-path runtime/Cargo.toml --check
 cargo clippy --manifest-path runtime/Cargo.toml --locked --all-targets -- -D warnings
 ```
 
-Keep the runtime lockfile committed. Loader tests exercise loading, not the 34 operation outcomes. See the [runtime guide](runtime/README.md) for parser, filesystem, and budget policies. Run both Rust and Python checks when their shared contract or data is affected.
+Keep the runtime lockfile committed. Loader tests exercise loading; the separate Rust `declarative_conformance` integration test executes the 34 operation outcomes. Use `cargo test --manifest-path runtime/Cargo.toml --locked --test declarative_conformance -- --nocapture` to see each case ID. See the [runtime guide](runtime/README.md) for parser, filesystem, and budget policies. Run both Rust and Python checks when their shared contract or data is affected.
 
 For documentation work, check relative links (including anchors when used), Markdown structure, whitespace, and consistency with the specification. Parse JSON examples when touched. Distinguish structural manifest validation from the prose's semantic requirements, as listed in the conformance guide. The [roadmap](docs/ROADMAP.md) records remaining validation work; keep these instructions aligned with available commands.
 

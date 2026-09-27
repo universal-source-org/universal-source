@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current active phase: Phase 2 — Declarative reference runtime.** Phases 0 and 1 are complete. The [closure review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline, explicit deferrals, and implementation boundaries. A Rust static declarative loader is implemented; dispatch is not. v0.1 is not stable or released.
+**Current active phase: Phase 2 — Declarative reference runtime.** Phases 0 and 1 are complete. The [closure review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline, explicit deferrals, and implementation boundaries. Rust loading, ready-source dispatch, returned-origin checks, and execution of 34 authored cases are implemented. v0.1 is not stable or released.
 
 This roadmap sequences work, not release dates or permission to implement future phases. Keep completed work intact. Update phase status and supporting evidence when exit criteria are met. A phase transition is a deliberate repository update; it never implies a tag, release, push, or repository-setting change.
 
@@ -27,25 +27,25 @@ Status: **Complete; reviewed experimental draft baseline**.
 
 Goals: make the existing minimal contract internally consistent and independently testable without selecting a runtime language or expanding the five-operation scope.
 
-Already present: English and Chinese introductions, [specification documents](../spec/README.md), [manifest schema](../spec/schema/manifest.schema.json), [static example](../examples/json/minimal/README.md), [RFC template](../spec/rfcs/0000-template.md), and [manifest conformance fixtures and command](../conformance/README.md). The command checks the schema, seven positive fixtures, 34 negative fixtures, and the example manifest using Draft 2020-12. The [34 declarative operation cases](../conformance/declarative/README.md) now cover independent ready-instance calls, with structural/reference validation only. The [scoped contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement, unresolved issues, dynamic-origin pressure, and deferred Phase 3 bindings.
+Already present: English and Chinese introductions, [specification documents](../spec/README.md), [manifest schema](../spec/schema/manifest.schema.json), [static example](../examples/json/minimal/README.md), [RFC template](../spec/rfcs/0000-template.md), and [manifest conformance fixtures and command](../conformance/README.md). The command checks the schema, seven positive fixtures, 34 negative fixtures, and the example manifest using Draft 2020-12. The [34 declarative operation cases](../conformance/declarative/README.md) cover independent ready-instance calls; Phase 2 now executes all 34 in addition to structural/reference validation. The [scoped contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement, unresolved issues, dynamic-origin pressure, and deferred Phase 3 bindings.
 
 Exit criteria:
 
 - Review the existing operation, manifest, lifecycle, permission, and compatibility contracts together; record unresolved issues without silently redesigning them. **Complete in the [closure review](reviews/2026-09-28-phase-1-closure-review.md), including load diagnostics, cancellation, limits, multi-instance state, origin/URL semantics, version/extension handling, and explicit U1/U2/P1 deferrals. No Phase 2 blocker remains.**
 - Add deterministic valid/invalid manifest fixtures and declarative input/expected-result cases under `conformance/`, including failures and edge cases. **Complete for the initial corpus: manifest fixtures and 34 declarative operation cases are present. Actual operation execution belongs to Phase 2.**
 - Provide a documented, repeatable way to validate schema structure and manifest fixtures with a standards-compliant validator; distinguish schema checks from semantic checks. **Complete for the current manifest schema and corpus.**
-- Verify the example against the documented contract and identify which cases require a future runtime harness. **Complete by static inspection and fixture consistency checks; all operation cases require future Phase 2 execution.**
+- Verify the example against the documented contract and identify which cases require a future runtime harness. **Complete by static inspection and fixture consistency checks; all operation cases required Phase 2 execution at closure and now pass the Rust harness.**
 - Record the scope of deferred JavaScript and host-service binding work for Phase 3. A reviewed draft baseline and its limitations are identifiable in Git. **Complete: the scoped review records the binding handoff, and the closure review identifies the audited Git baseline, closure commit, limitations, and allowed implementation choices. No normative contract changes were required.**
 
 ## Phase 2 — Declarative reference runtime
 
-Status: **Active; static declarative loader implemented, dispatch and execution harness pending**.
+Status: **Active; loading, ready-source dispatch, returned-origin enforcement, and 34-case execution implemented; lifecycle/isolation obligations remain**.
 
 Goals: implement the existing static declarative contract as the first small reference runtime. The reference implementation uses Rust under [ADR 0002](decisions/0002-reference-runtime-language.md); the specification remains language-neutral.
 
 Use the [closure handoff](reviews/2026-09-28-phase-1-closure-review.md#phase-2-implementation-boundary) when designing the loader and harness. Deferred reporting/precedence/parser questions are not permission to invent portable behavior; document implementation policies and keep them distinct from contract assertions.
 
-Completed unit: the [Rust loader](../runtime/README.md) validates manifests with the authoritative schema and semantic rules, resolves contained entries, validates all static data/references, enforces finite input budgets, and returns host-facing diagnostics. Loading tests and independent conformance checks pass; no operation case has been executed.
+Completed unit: the [Rust loader](../runtime/README.md) validates manifests with the authoritative schema and semantic rules, resolves contained entries, validates all static data/references, enforces finite input budgets, and returns host-facing diagnostics. Loading tests and independent conformance checks pass. The next completed unit adds the five-operation dispatcher, result validation, exact returned-origin checks, and a production-runtime harness: all 34 unchanged authored cases execute and pass. This does not implement complete lifecycle behavior.
 
 Exit criteria:
 
@@ -107,4 +107,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Implement static declarative operation dispatch plus an execution harness for the existing 34 cases. Preserve the authored outcomes, input/default/lookup rules, result envelopes, and result-time grant checks. Keep the closure deferrals explicit, including non-ready reporting and combined result-error precedence. Do not add network consumers, JavaScript, adapters, WASM, or platform apps. The loader unit did not begin this task; Phase 2 remains incomplete.
+Implement and test the remaining Phase 2 lifecycle/isolation boundary around the existing loader and dispatcher: serialized instance calls, finite invocation deadlines/resource limits, cancellation and late-completion suppression, disposal/unsafe-instance handling, and instance isolation with documented host policies. Keep U1/U2 portable outcomes deferred unless explicitly decided through the specification process. Preserve the 34 ready-source cases and do not add JavaScript, network consumers, adapters, or platform integration. This unit has not started; Phase 2 remains incomplete.
