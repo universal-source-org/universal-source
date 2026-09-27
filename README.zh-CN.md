@@ -63,10 +63,12 @@ TVBox、FongMi、drpy、XBPQ 和 XYQ 是既有生态和灵感来源。它们提�
 | `runtime/` | 为未来参考运行时预留。 |
 | [`examples/`](./examples/json/minimal/README.md) | 展示契约的小型源示例。 |
 | `conformance/` | 为测试样本和跨实现一致性检查预留。 |
-| `docs/` | 为指南和架构说明预留。 |
+| [`docs/`](./docs/PROJECT_CHARTER.md) | 项目章程、设计原则、当前架构、路线图、决策记录和任务计划。 |
 
 建议先阅读[规范索引](./spec/README.md)，再查看[示例清单和源](./examples/json/minimal/README.md)。示例媒体地址只是占位符，阅读示例不需要网络访问。目前没有可执行示例的运行时命令。
 
 ## 参与贡献
+
+请先阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 和 [AGENTS.md](./AGENTS.md)，了解仓库工作流程和上下文索引。[路线图](./docs/ROADMAP.md) 记录当前阶段及其完成标准。
 
 请使用 [RFC 模板](./spec/rfcs/0000-template.md) 提出契约变更，说明具体场景、可移植行为、迁移影响，以及独立实现如何验证一致性。小型示例和明确的旧生态兼容问题，比推测性的抽象更有价值。

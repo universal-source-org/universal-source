@@ -63,10 +63,12 @@ This project stays in one monorepo:
 | `runtime/` | Reserved for future reference runtime work. |
 | [`examples/`](./examples/json/minimal/README.md) | Small sources illustrating the contract. |
 | `conformance/` | Reserved for fixtures and cross-implementation checks. |
-| `docs/` | Reserved for guides and architectural notes. |
+| [`docs/`](./docs/PROJECT_CHARTER.md) | Project charter, principles, current architecture, roadmap, decisions, and task plans. |
 
 Start with the [specification index](./spec/README.md), then read the [example manifest and source](./examples/json/minimal/README.md). The example uses a placeholder media URL and needs no network access to inspect. There is no runtime command to execute it yet.
 
 ## Contributing
+
+Start with [CONTRIBUTING.md](./CONTRIBUTING.md) and [AGENTS.md](./AGENTS.md) for the repository workflow and context map. The [roadmap](./docs/ROADMAP.md) identifies the active phase and its exit criteria.
 
 Propose contract changes using the [RFC template](./spec/rfcs/0000-template.md). Explain the concrete use case, portable behavior, migration impact, and how independent implementations could test agreement. Small examples and documented legacy incompatibilities are more useful than speculative abstractions.
