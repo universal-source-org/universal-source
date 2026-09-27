@@ -6,7 +6,7 @@
 
 [简体中文](./README.zh-CN.md) · [Specification v0.1 draft](./spec/README.md) · [Minimal JSON source](./examples/json/minimal/README.md)
 
-Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository currently contains a specification foundation and an example; a reference runtime has not been implemented.
+Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative loader](./runtime/README.md). Operation dispatch and execution tests remain unimplemented.
 
 ## The contract
 
@@ -45,7 +45,7 @@ The architectural direction is:
 3. JavaScript for sources needing custom logic.
 4. Compatibility adapters for existing ecosystems.
 
-A shared runtime core may eventually use Rust, without making Rust part of the standard. WebAssembly may be explored later; it is not a v0.1 engine and is not implemented here.
+The reference runtime uses Rust under [ADR 0002](./docs/decisions/0002-reference-runtime-language.md), without making Rust part of the standard. WebAssembly may be explored later; it is not a v0.1 engine and is not implemented here.
 
 v0.1 excludes recommendation systems, accounts, sync, DRM, subtitles, comments, danmaku, downloads, player UI, and platform-specific apps. The first version deliberately avoids a general scraping language, native plugins, and application-specific APIs.
 
@@ -60,7 +60,7 @@ This project stays in one monorepo:
 | Directory | Purpose |
 | --- | --- |
 | [`spec/`](./spec/README.md) | Independent specification, manifest schema, and RFCs. |
-| `runtime/` | Reserved for future reference runtime work. |
+| [`runtime/`](./runtime/README.md) | Rust static declarative loader and loading tests; no dispatch yet. |
 | [`examples/`](./examples/json/minimal/README.md) | Small sources illustrating the contract. |
 | [`conformance/`](./conformance/README.md) | Manifest validation and declarative operation fixtures; runtime execution checks are planned. |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | Project charter, principles, current architecture, roadmap, decisions, and task plans. |

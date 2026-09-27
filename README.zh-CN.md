@@ -6,7 +6,7 @@
 
 [English](./README.md) · [v0.1 规范草案](./spec/README.md) · [最小 JSON 源](./examples/json/minimal/README.md)
 
-Universal Source 的目标是让同一份内容源在 **Android、Android TV、iOS、iPadOS、tvOS、macOS、Windows 和 Linux** 上运行。这是项目目标，并不代表目前已支持这些平台。仓库当前提供规范基础和示例，尚未实现参考运行时。
+Universal Source 的目标是让同一份内容源在 **Android、Android TV、iOS、iPadOS、tvOS、macOS、Windows 和 Linux** 上运行。这是项目目标，并不代表目前已支持这些平台。仓库当前提供经过审查的 v0.1 草案、示例、一致性测试数据，以及 [Rust 声明式源加载器](./runtime/README.md)。操作分发和操作执行测试尚未实现。
 
 ## 核心契约
 
@@ -45,7 +45,7 @@ Universal Source 的目标是让同一份内容源在 **Android、Android TV、i
 3. 用于复杂逻辑的 JavaScript。
 4. 面向已有生态的兼容适配器。
 
-未来可能使用 Rust 实现共享运行时核心，但 Rust 不属于标准要求。WebAssembly 留待后续探索；它不是 v0.1 引擎，本仓库也未实现它。
+参考运行时已根据 [ADR 0002](./docs/decisions/0002-reference-runtime-language.md) 选择 Rust，但 Rust 不属于标准要求。WebAssembly 留待后续探索；它不是 v0.1 引擎，本仓库也未实现它。
 
 v0.1 不包含推荐系统、账号、同步、DRM、字幕、评论、弹幕、下载、播放器 UI 或平台专属应用。首个版本也不引入通用抓取语言、原生插件或应用专属 API。
 
@@ -60,7 +60,7 @@ TVBox、FongMi、drpy、XBPQ 和 XYQ 是既有生态和灵感来源。它们提�
 | 目录 | 用途 |
 | --- | --- |
 | [`spec/`](./spec/README.md) | 独立规范、清单 Schema 和 RFC。 |
-| `runtime/` | 为未来参考运行时预留。 |
+| [`runtime/`](./runtime/README.md) | Rust 静态声明式源加载器和加载测试；尚无操作分发。 |
 | [`examples/`](./examples/json/minimal/README.md) | 展示契约的小型源示例。 |
 | [`conformance/`](./conformance/README.md) | 清单 Schema 验证和声明式操作测试样本；运行时执行检查尚待实现。 |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | 项目章程、设计原则、当前架构、路线图、决策记录和任务计划。 |

@@ -5,6 +5,7 @@ ADRs preserve the rationale for consequential project and implementation choices
 | Record | Status | Subject |
 | --- | --- | --- |
 | [0001](0001-initial-architecture.md) | Accepted | Initial architecture and boundaries already reflected in the v0.1 draft. |
+| [0002](0002-reference-runtime-language.md) | Accepted | Rust reference implementation; completes the language choice deferred by ADR 0001. |
 
 ## When to record a decision
 

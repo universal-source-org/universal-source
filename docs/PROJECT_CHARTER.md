@@ -15,7 +15,7 @@ The cross-platform objective covers Android, Android TV, iOS, iPadOS, tvOS, macO
 - A small content-source contract whose initial operations are defined in the [Source API](../spec/source-api.md).
 - A controlled host boundary for untrusted sources, governed by the [Host API](../spec/host-api.md).
 
-The standard defines behavior and interfaces, not implementation language. Declarative JSON and JavaScript are the initial source-engine targets. Their inclusion does not mandate the language used to implement a runtime. Rust remains a candidate for a shared reference core; WebAssembly remains exploratory.
+The standard defines behavior and interfaces, not implementation language. Declarative JSON and JavaScript are the initial source-engine targets. Their inclusion does not mandate the language used to implement a runtime. The reference runtime uses Rust under [ADR 0002](decisions/0002-reference-runtime-language.md); this is not a standard requirement. WebAssembly remains exploratory.
 
 ## What the project is not
 

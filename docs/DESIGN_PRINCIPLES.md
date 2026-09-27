@@ -28,7 +28,7 @@ Use small representative sources, deterministic positive and negative fixtures, 
 
 ## Avoid architecture for architecture's sake
 
-Keep the monorepo and the active phase focused on a coherent, reviewable result. Do not add frameworks, engine formats, repositories, native apps, or speculative layers merely because they might be useful later. Rust is a candidate implementation choice; WASM research is not authorization to design or implement a plugin subsystem now.
+Keep the monorepo and the active phase focused on a coherent, reviewable result. Do not add frameworks, engine formats, repositories, native apps, or speculative layers merely because they might be useful later. Rust is the reference implementation choice under [ADR 0002](decisions/0002-reference-runtime-language.md), not a source-format requirement; WASM research is not authorization to design or implement a plugin subsystem now.
 
 ## Keep evidence and status visible
 

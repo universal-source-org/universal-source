@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current active phase: Phase 2 — Declarative reference runtime.** Phases 0 and 1 are complete. The [closure review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline, explicit deferrals, and implementation boundaries. No runtime has been implemented and v0.1 is not stable or released.
+**Current active phase: Phase 2 — Declarative reference runtime.** Phases 0 and 1 are complete. The [closure review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline, explicit deferrals, and implementation boundaries. A Rust static declarative loader is implemented; dispatch is not. v0.1 is not stable or released.
 
 This roadmap sequences work, not release dates or permission to implement future phases. Keep completed work intact. Update phase status and supporting evidence when exit criteria are met. A phase transition is a deliberate repository update; it never implies a tag, release, push, or repository-setting change.
 
@@ -39,11 +39,13 @@ Exit criteria:
 
 ## Phase 2 — Declarative reference runtime
 
-Status: **Active; no implementation yet**.
+Status: **Active; static declarative loader implemented, dispatch and execution harness pending**.
 
-Goals: implement the existing static declarative contract as the first small reference runtime. Choose an implementation language through a scoped decision; Rust is a candidate, not a prerequisite.
+Goals: implement the existing static declarative contract as the first small reference runtime. The reference implementation uses Rust under [ADR 0002](decisions/0002-reference-runtime-language.md); the specification remains language-neutral.
 
 Use the [closure handoff](reviews/2026-09-28-phase-1-closure-review.md#phase-2-implementation-boundary) when designing the loader and harness. Deferred reporting/precedence/parser questions are not permission to invent portable behavior; document implementation policies and keep them distinct from contract assertions.
+
+Completed unit: the [Rust loader](../runtime/README.md) validates manifests with the authoritative schema and semantic rules, resolves contained entries, validates all static data/references, enforces finite input budgets, and returns host-facing diagnostics. Loading tests and independent conformance checks pass; no operation case has been executed.
 
 Exit criteria:
 
@@ -105,4 +107,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Record a scoped ADR choosing the reference implementation language, then implement and test only the static source loader: manifest/schema/semantic validation, contained entry resolution, complete stored-data/reference checks, finite load limits, and distinguishable host-facing diagnostics. Document the targeted draft commit and host policies. Keep operation dispatch and its execution harness for the next unit; do not add JavaScript, network consumers, adapters, WASM, or platform apps. Passing loader tests alone does not complete Phase 2.
+Implement static declarative operation dispatch plus an execution harness for the existing 34 cases. Preserve the authored outcomes, input/default/lookup rules, result envelopes, and result-time grant checks. Keep the closure deferrals explicit, including non-ready reporting and combined result-error precedence. Do not add network consumers, JavaScript, adapters, WASM, or platform apps. The loader unit did not begin this task; Phase 2 remains incomplete.

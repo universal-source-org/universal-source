@@ -1,0 +1,16 @@
+[package]
+name = "universal-source-runtime"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+[dependencies]
+jsonschema = { version = "0.58.1", default-features = false }
+mime = "0.3.17"
+serde = "1.0"
+serde_json = "1.0"
+url = "2.5.8"
+
+[dev-dependencies]
+tempfile = "3.27"
