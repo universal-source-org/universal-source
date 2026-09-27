@@ -1,0 +1,19 @@
+{
+  "specVersion": "0.1",
+  "id": "org.example.fixture",
+  "name": "Manifest fixture",
+  "engine": "declarative",
+  "entry": "source.json",
+  "permissions": {
+    "network": [],
+    "cookies": false,
+    "storage": false
+  },
+  "capabilities": {
+    "operations": [
+      "home",
+      "home"
+    ],
+    "host": []
+  }
+}

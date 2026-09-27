@@ -8,7 +8,7 @@ This is a snapshot of the repository's current state, not a proposed implementat
 | --- | --- | --- |
 | Repository context | Present documentation | Charter, principles, roadmap, decisions, and contribution workflow in this monorepo. |
 | Source contract | Specified as an experimental draft | [Source API](../spec/source-api.md) defines exactly five operations, results, errors, and static declarative dispatch. No executing engine exists. |
-| Manifest | Schema and prose present | [Schema](../spec/schema/manifest.schema.json) covers structure; semantic validation still requires the prose contract. No checked-in validator or automated validation command exists. |
+| Manifest | Schema, prose, and validation tooling present | [Schema](../spec/schema/manifest.schema.json) covers structure; the [conformance workflow](../conformance/README.md) checks it and manifest fixtures with a real Draft 2020-12 validator. Semantic source validation remains separate. |
 | Host boundary | Partially specified | [Host API](../spec/host-api.md) defines service responsibilities and permission boundaries. Exact service signatures and algorithm profiles remain open. |
 | Lifecycle and versioning | Specified as draft contracts | [Lifecycle](../spec/lifecycle.md) and [compatibility](../spec/compatibility.md) define expected behavior; no runtime enforces it yet. |
 | Declarative example | Static data present | [Minimal source](../examples/json/minimal/README.md) demonstrates all five operations with a placeholder media URL. It is not an executable conformance suite. |
@@ -18,7 +18,7 @@ This is a snapshot of the repository's current state, not a proposed implementat
 | Platform integrations | Planned proof, not implemented | No Android, Apple, desktop, or TV runtime integration is implemented. |
 | WASM | Exploratory only | No engine value, ABI, module loader, or WASM runtime architecture is defined or implemented. |
 
-There are currently **no implemented executable components**. Documentation, schema, and example data are the existing foundation. Recognizing an engine name in a manifest does not mean the engine runs.
+There are currently **no implemented source-runtime components**. The executable code is development-only manifest validation tooling using Python's unittest runner and a pinned `jsonschema` dependency. This does not choose a runtime implementation language. Recognizing an engine name in a manifest does not mean the engine runs.
 
 ## Contract boundaries that exist in the draft
 
@@ -35,7 +35,7 @@ The host-service vocabulary covers HTTP, cookies, storage, HTML parsing, JSON, c
 | `spec/` | Draft contracts, manifest schema, and RFC template. |
 | `examples/json/minimal/` | The one existing declarative example. |
 | `runtime/` | Reserved area for future implementation. |
-| `conformance/` | Reserved area for fixtures and cross-implementation checks; no checked-in suite yet. |
+| `conformance/` | Manifest fixtures, validator tests, development requirements, and local command documentation. No source-operation execution harness yet. |
 | `docs/` | Durable project context, decisions, and task plans. |
 
 Local scaffolding may contain empty runtime, language-binding, or conformance directories. Git does not preserve empty directories by itself; their names are neither implementations nor decisions to adopt a language or ABI. The plan directories have explicit `.gitkeep` files so their workflow locations survive cloning.

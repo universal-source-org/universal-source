@@ -1,0 +1,17 @@
+{
+  "specVersion": "0.1",
+  "id": "org.example.fixture",
+  "engine": "declarative",
+  "entry": "source.json",
+  "permissions": {
+    "network": [],
+    "cookies": false,
+    "storage": false
+  },
+  "capabilities": {
+    "operations": [
+      "home"
+    ],
+    "host": []
+  }
+}

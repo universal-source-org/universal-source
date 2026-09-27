@@ -1,0 +1,20 @@
+{
+  "specVersion": "0.1",
+  "id": "org.example.fixture",
+  "name": "Manifest fixture",
+  "engine": "javascript",
+  "entry": "scripts/main.js",
+  "permissions": {
+    "network": [],
+    "cookies": false,
+    "storage": true
+  },
+  "capabilities": {
+    "operations": [
+      "home"
+    ],
+    "host": [
+      "storage"
+    ]
+  }
+}

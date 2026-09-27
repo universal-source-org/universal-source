@@ -1,0 +1,35 @@
+{
+  "specVersion": "0.1",
+  "id": "org.example.fixture",
+  "name": "Manifest fixture",
+  "engine": "javascript",
+  "entry": "scripts/main.js",
+  "permissions": {
+    "network": [
+      "https://api.example.invalid",
+      "http://media.example.invalid:8080",
+      "https://[2001:db8::1]:8443"
+    ],
+    "cookies": true,
+    "storage": true
+  },
+  "capabilities": {
+    "operations": [
+      "home",
+      "category",
+      "search",
+      "detail",
+      "play"
+    ],
+    "host": [
+      "http",
+      "cookies",
+      "storage",
+      "html",
+      "json",
+      "crypto",
+      "url",
+      "log"
+    ]
+  }
+}

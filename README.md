@@ -62,7 +62,7 @@ This project stays in one monorepo:
 | [`spec/`](./spec/README.md) | Independent specification, manifest schema, and RFCs. |
 | `runtime/` | Reserved for future reference runtime work. |
 | [`examples/`](./examples/json/minimal/README.md) | Small sources illustrating the contract. |
-| `conformance/` | Reserved for fixtures and cross-implementation checks. |
+| [`conformance/`](./conformance/README.md) | Manifest schema validation and fixtures; source-operation checks are planned. |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | Project charter, principles, current architecture, roadmap, decisions, and task plans. |
 
 Start with the [specification index](./spec/README.md), then read the [example manifest and source](./examples/json/minimal/README.md). The example uses a placeholder media URL and needs no network access to inspect. There is no runtime command to execute it yet.
