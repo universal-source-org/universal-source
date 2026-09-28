@@ -3,6 +3,10 @@
 #[cfg(test)]
 mod analysis;
 #[cfg(test)]
+mod attribute_tests;
+#[cfg(test)]
+mod attributes;
+#[cfg(test)]
 mod corpus;
 #[cfg(test)]
 mod tests;

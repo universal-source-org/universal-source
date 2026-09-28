@@ -11,3 +11,9 @@ boa_parser = { version = "=0.22.0", default-features = false }
 boa_ast = { version = "=0.22.0", default-features = false }
 boa_interner = { version = "=0.22.0", default-features = false }
 rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader"] }
+
+# Supplemental clause-preserving syntax evidence only, not a production parser choice.
+oxc_allocator = "=0.152.0"
+oxc_ast = "=0.152.0"
+oxc_parser = "=0.152.0"
+oxc_span = "=0.152.0"
