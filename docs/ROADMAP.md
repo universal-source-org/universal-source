@@ -63,7 +63,7 @@ Current exit-criteria evidence:
 
 ## Phase 3 — JavaScript runtime
 
-Status: **Active; binding RFC drafted and internally reviewed; initial engine evaluation and Boa F1 experiment complete with no selection; normative adoption and production implementation pending**.
+Status: **Active; binding RFC and fresh-realm lifecycle decision internally reviewed; no engine selected; embedding proof, normative adoption and production implementation pending**.
 
 Goals: specify and implement controlled JavaScript execution while preserving the platform-neutral source contract.
 
@@ -71,11 +71,13 @@ Completed first design unit: [RFC 0001](../spec/rfcs/0001-javascript-execution-b
 
 The [engine evaluation](reviews/2026-09-28-javascript-engine-evaluation.md) compares QuickJS/QuickJS-NG, Boa, V8 and JavaScriptCore. The isolated QuickJS-NG spike proves several primitives but reproduces retained Promise/await reactions crossing the proposed terminal boundary. Outcome B: no engine selected, no engine ADR, and no RFC acceptance. The [completed plan](plans/completed/2026-09-28-javascript-engine-evaluation.md) records baseline and spike validation. Desktop evidence establishes no mobile or other-platform support.
 
-The [focused Boa ownership review](reviews/2026-09-28-boa-reaction-ownership.md) records Outcome B. Public callback records preserve `.then` and `await` registration tokens, but opaque future jobs and absent handlers prevent complete pre-execution attribution; callback substitution changes child Promise state and can still execute source through species resolvers. F1 remains unresolved. Fourteen diagnostic tests pass in an isolated crate; no Boa engine selection, ADR, RFC amendment or production change follows. See the [completed plan](plans/completed/2026-09-28-boa-reaction-ownership.md).
+The [focused Boa ownership review](reviews/2026-09-28-boa-reaction-ownership.md) records Outcome B. Public callback records preserve `.then` and `await` registration tokens, but opaque future jobs and absent handlers prevent complete pre-execution attribution; callback substitution changes child Promise state and can still execute source through species resolvers. That experiment left F1 unresolved under the persistent-realm proposal. Fourteen diagnostic tests pass in an isolated crate; no Boa engine selection, ADR, RFC amendment or production change follows. See the [completed plan](plans/completed/2026-09-28-boa-reaction-ownership.md).
+
+The [lifecycle decision](reviews/2026-09-28-javascript-lifecycle-decision.md) compares Models A–E and chooses fresh realms per invocation, independent of the unchanged full-envelope return model. Logical instances reuse immutable snapshots, but mutable module/global/intrinsic state never crosses calls. Whole-realm retirement eliminates the proposed need for selective stale-reaction revocation; direct settlement observation, source quiescence and native delivery gating remain required. F1 now has an explicit proposed lifecycle resolution, not an engine implementation proof. RFC 0001 is narrowly revised and remains unaccepted; [validation](plans/completed/2026-09-28-javascript-lifecycle-decision.md) reruns unchanged baseline and experiment suites.
 
 Exit criteria:
 
-- Review an explicit execution binding covering modules, exports, asynchronous calls, initialization, and host-service injection. **Initial draft and internal review complete in RFC 0001; acceptance and feasibility evidence remain pending.**
+- Review an explicit execution binding covering modules, exports, asynchronous calls, initialization, and host-service injection. **Initial draft and F1 fresh-realm revision internally reviewed in RFC 0001; embedding feasibility and acceptance remain pending.**
 - Define and test the exact host-service signatures, value encodings, and algorithm profiles needed to claim support; report unavailable required services explicitly.
 - Demonstrate sandboxing, denied authority, state isolation, cancellation, and resource-limit behavior with deterministic cases.
 - Execute representative JavaScript sources through the same source contract; document actual service and platform support without broad interoperability claims unsupported by evidence.
@@ -120,4 +122,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Make a scoped **binding/lifecycle design decision** for [F1](reviews/2026-09-28-boa-reaction-ownership.md#missing-mechanism-and-next-design-decision). Specify the observable state of abandoned child Promises and later B-owned reactions, compare persistent-state ownership with explicit realm-lifetime alternatives, and decide whether the retained-state benefit warrants an engine reaction/job extension. Do not substitute callback return values for job discard or silently reset healthy instances. This is not another broad engine survey or authorization for production JavaScript implementation. Any RFC amendment requires independent justification and explicit review; preserve Model B, JSON-only transfer, module restrictions, capability injection, code-generation ban, A1/U1/U2/P1/D1/D2 and Phase 2 behavior. Engine selection and the remaining feasibility evidence stay separate.
+Review and minimally prove the revised **fresh-realm lifecycle** against the existing QuickJS-NG/rquickjs embedding path, as scoped in the [decision review](reviews/2026-09-28-javascript-lifecycle-decision.md#engine-implications-and-next-unit). Trace load-validation and per-call realms, captured functions, jobs, roots and host resolvers through completion/interruption; prove that late native completions cannot reenter a retired realm and every later call resets mutable state. Review repeated module instantiation and capture-before-evaluation through public APIs without implementing a production loader. Preserve the old experiments as counterexample evidence. This is neither a broad survey nor engine selection or production execution. If the new lifetime model exposes an incompatibility, resolve that specific RFC issue first. Other engine feasibility gaps, service profiles, RFC acceptance and platform evidence remain separate.
