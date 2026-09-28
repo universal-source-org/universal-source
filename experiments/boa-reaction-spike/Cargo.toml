@@ -1,0 +1,10 @@
+[package]
+name = "universal-source-boa-reaction-spike"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+# Isolated non-production F1 probes; no changes to runtime dependencies.
+[dependencies]
+boa_engine = { version = "=0.22.0", default-features = false }

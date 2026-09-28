@@ -63,13 +63,15 @@ Current exit-criteria evidence:
 
 ## Phase 3 — JavaScript runtime
 
-Status: **Active; binding RFC drafted and internally reviewed; initial engine evaluation complete with no selection; normative adoption and production implementation pending**.
+Status: **Active; binding RFC drafted and internally reviewed; initial engine evaluation and Boa F1 experiment complete with no selection; normative adoption and production implementation pending**.
 
 Goals: specify and implement controlled JavaScript execution while preserving the platform-neutral source contract.
 
 Completed first design unit: [RFC 0001](../spec/rfcs/0001-javascript-execution-binding.md) proposes a restricted local ES module graph, named exports, full Source API envelope returns, synchronous module initialization, Promise completion, JSON-only value transfer and invocation-scoped capability injection. Its self-review preserves A1/U1/U2/P1/D1/D2 and Phase 2 resource limits. The [completed plan](plans/completed/2026-09-28-javascript-binding-rfc.md) records validation. The RFC is not accepted or implemented; engine feasibility and service profiles remain separate work.
 
 The [engine evaluation](reviews/2026-09-28-javascript-engine-evaluation.md) compares QuickJS/QuickJS-NG, Boa, V8 and JavaScriptCore. The isolated QuickJS-NG spike proves several primitives but reproduces retained Promise/await reactions crossing the proposed terminal boundary. Outcome B: no engine selected, no engine ADR, and no RFC acceptance. The [completed plan](plans/completed/2026-09-28-javascript-engine-evaluation.md) records baseline and spike validation. Desktop evidence establishes no mobile or other-platform support.
+
+The [focused Boa ownership review](reviews/2026-09-28-boa-reaction-ownership.md) records Outcome B. Public callback records preserve `.then` and `await` registration tokens, but opaque future jobs and absent handlers prevent complete pre-execution attribution; callback substitution changes child Promise state and can still execute source through species resolvers. F1 remains unresolved. Fourteen diagnostic tests pass in an isolated crate; no Boa engine selection, ADR, RFC amendment or production change follows. See the [completed plan](plans/completed/2026-09-28-boa-reaction-ownership.md).
 
 Exit criteria:
 
@@ -118,4 +120,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Resolve the evaluation's [F1 retained-reaction ownership issue](reviews/2026-09-28-javascript-engine-evaluation.md#rfc-feedback-and-smallest-follow-up) before production execution. Run only a focused Boa callback/job ownership experiment for queued and unqueued `.then`/`await` reactions across synthetic invocations, and review whether RFC 0001 can be implemented faithfully through supported hooks. If not, document the necessary engine extension or independently justified RFC revision; do not silently relax terminal timing or persistent instance state. Engine selection still requires the remaining control/hardening/build evidence. Keep RFC acceptance explicit and preserve A1/U1/U2/P1/D1/D2 and Phase 2 resource limits. No full JavaScript runtime or host-service implementation is authorized by this follow-up.
+Make a scoped **binding/lifecycle design decision** for [F1](reviews/2026-09-28-boa-reaction-ownership.md#missing-mechanism-and-next-design-decision). Specify the observable state of abandoned child Promises and later B-owned reactions, compare persistent-state ownership with explicit realm-lifetime alternatives, and decide whether the retained-state benefit warrants an engine reaction/job extension. Do not substitute callback return values for job discard or silently reset healthy instances. This is not another broad engine survey or authorization for production JavaScript implementation. Any RFC amendment requires independent justification and explicit review; preserve Model B, JSON-only transfer, module restrictions, capability injection, code-generation ban, A1/U1/U2/P1/D1/D2 and Phase 2 behavior. Engine selection and the remaining feasibility evidence stay separate.
