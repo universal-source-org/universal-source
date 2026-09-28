@@ -12,6 +12,7 @@ Status: **experimental draft**. This directory defines a portable contract indep
 | [Compatibility](./compatibility.md) | Version negotiation, adapters, and conformance boundaries. |
 | [Manifest schema](./schema/manifest.schema.json) | Machine-checkable manifest structure. |
 | [RFC template](./rfcs/0000-template.md) | Proposed changes; RFCs do not become normative merely by being added. |
+| [RFC 0001: JavaScript execution binding](./rfcs/0001-javascript-execution-binding.md) | Proposed modules, exports, lifecycle, values/errors and capability injection; internally reviewed, not accepted or implemented. |
 
 The uppercase terms MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY express requirements as defined in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119). Lowercase uses are ordinary prose. These terms describe conformance to this draft, not a claim that a conforming runtime exists.
 
@@ -53,4 +54,4 @@ Unknown manifest fields, engine values, operations, and host services MUST be re
 
 v0.1 defines only the five source operations. It excludes recommendation systems, accounts, sync, DRM, subtitles, comments, danmaku, downloads, player UI, native applications, and WASM engines. Network scraping rules are not part of the initial static declarative format.
 
-The [minimal declarative source](../examples/json/minimal/README.md) demonstrates the data contract without a runtime. The JavaScript module/async binding, exact host service signatures and algorithm profiles, and an executable conformance suite remain open work. Their absence MUST NOT be presented as complete JavaScript or host-service interoperability. Future runtime implementations may use Rust or another language; that decision does not alter this specification.
+The [minimal declarative source](../examples/json/minimal/README.md) demonstrates the data contract; the [declarative harness](../conformance/declarative/README.md) now executes the static profile. [RFC 0001](./rfcs/0001-javascript-execution-binding.md) proposes the JavaScript binding without amending this draft. Normative adoption, JavaScript execution/conformance, and exact host service signatures and algorithm profiles remain open work. Their absence MUST NOT be presented as complete JavaScript or host-service interoperability. Runtime implementations may use Rust or another language; that decision does not alter this specification.

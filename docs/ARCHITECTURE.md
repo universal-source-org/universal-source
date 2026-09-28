@@ -13,7 +13,7 @@ This is a snapshot of the repository's current state, not a proposed implementat
 | Lifecycle and versioning | Specified as draft contracts | [Lifecycle](../spec/lifecycle.md) and [compatibility](../spec/compatibility.md) define expected behavior; loading and static invocation lifecycle are implemented with documented host policies; versioning remains the specified draft contract. |
 | Declarative example | Static data present | [Minimal source](../examples/json/minimal/README.md) demonstrates all five operations with a placeholder media URL. The [operation corpus](../conformance/declarative/README.md) references it directly; all 34 ready-source cases execute through the Rust harness. |
 | Reference runtime | Phase 2 complete for static execution; Rust loader, dispatcher and lifecycle implemented | [Runtime and tests](../runtime/README.md) load sources, dispatch five operations, check returned origins, and enforce instance-local lifecycle/limits. The execution harness runs 34 cases; no platform binding exists. |
-| JavaScript execution | Phase 3 active for binding design; implementation absent | The manifest accepts `javascript`, but no interoperable module/async binding or engine implementation exists. |
+| JavaScript execution | First Phase 3 binding design unit drafted and internally reviewed; implementation absent | [RFC 0001](../spec/rfcs/0001-javascript-execution-binding.md) proposes modules, full-envelope returns, lifecycle, value/error transfer and explicit service injection. It is not accepted; the manifest's `javascript` recognition still does not imply execution support. |
 | Legacy adapters | Planned, not implemented | The compatibility document defines their boundary; no importer or adapter exists. |
 | Platform integrations | Planned proof, not implemented | No Android, Apple, desktop, or TV runtime integration is implemented. |
 | WASM | Exploratory only | No engine value, ABI, module loader, or WASM runtime architecture is defined or implemented. |
@@ -24,7 +24,7 @@ The implemented runtime is a **static declarative loader, dispatcher and instanc
 
 A source consists of a manifest and entry file. The manifest identifies its exact specification version, engine, operations, required host services, and requested permissions. The runtime is responsible for validation, isolation, invocation, and result validation on behalf of a host. The host grants authority and consumes results. Loading and static validation now have an implementation. Invocation, returned-origin grant checks, serialization, cooperative cancellation/deadlines, and quiescent disposal now exist. Result consumers remain unimplemented; exact allocator accounting and preemptive execution are not claimed.
 
-The initial operation vocabulary is `home`, `category`, `search`, `detail`, and `play`; individual sources may declare a subset under the existing manifest rules. The declarative profile describes static JSON lookups. It does not include a network scraping language. JavaScript is the other initial engine target, with its execution binding still open.
+The initial operation vocabulary is `home`, `category`, `search`, `detail`, and `play`; individual sources may declare a subset under the existing manifest rules. The declarative profile describes static JSON lookups. It does not include a network scraping language. JavaScript is the other initial engine target; its proposed binding is in RFC 0001, pending feasibility evidence and explicit normative adoption.
 
 The host-service vocabulary covers HTTP, cookies, storage, HTML parsing, JSON, crypto, URL utilities, and logging. Required services and requested permissions are distinct. Returned media and poster URLs remain subject to the specified network boundary. This summary does not change the normative rules.
 
@@ -46,7 +46,7 @@ The [Rust harness](../runtime/tests/declarative_conformance.rs) freshly loads ea
 
 | Path | Current role |
 | --- | --- |
-| `spec/` | Draft contracts, manifest schema, and RFC template. |
+| `spec/` | Draft contracts, manifest schema, RFC template and proposed JavaScript binding RFC. |
 | `examples/json/minimal/` | The one existing declarative example. |
 | `runtime/` | One Rust library crate, Cargo manifest/lockfile, loader/dispatcher/lifecycle modules, focused tests, execution harness, and policy/build documentation. |
 | `conformance/` | Manifest fixtures and validation, declarative input/expected-result cases, fixture-consistency tests, and local command documentation. The Rust execution harness consumes the unchanged 34-case corpus. |
@@ -59,3 +59,5 @@ Local scaffolding may contain empty runtime, language-binding, or conformance di
 [ADR 0001](decisions/0001-initial-architecture.md) records the monorepo, platform-neutral contract, initial engines, and adapter boundary. [ADR 0002](decisions/0002-reference-runtime-language.md) selects Rust for the reference implementation; Rust remains outside the standard and source format. WASM has no current architecture beyond being deferred research. The loader and its dependencies are documented; further runtime structure and platform bindings still need evidence and scoped decisions.
 
 The [declarative contract review](reviews/2026-09-28-declarative-contract-review.md) records example agreement and the Phase 3 binding handoff. The [Phase 1 closure review](reviews/2026-09-28-phase-1-closure-review.md) completes the joint contract audit, identifies the reviewed Git baseline, and explicitly defers non-ready reporting, combined result-error precedence, dynamic-origin expansion, and remaining host-policy/parser questions. The [Phase 2 closure review](reviews/2026-09-28-phase-2-closure-review.md) accepts loading, dispatch and static lifecycle enforcement against all static-profile exit criteria, with explicit host policies and evidence limits. Phases 1 and 2 are complete; Phase 3 is active for JavaScript binding design. JavaScript execution and network consumers remain unimplemented. Closure does not establish complete v0.1 conformance or a stable release. These reviews do not amend the contract.
+
+The [RFC self-review](../spec/rfcs/0001-javascript-execution-binding.md#internal-review-and-decision) and [completed design plan](plans/completed/2026-09-28-javascript-binding-rfc.md) record the first Phase 3 unit. No engine, service signatures or new portable types were adopted. Next is a separate engine evaluation/selection unit with a minimal feasibility spike; implementation and conformance work remain future units.

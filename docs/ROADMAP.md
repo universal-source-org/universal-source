@@ -63,13 +63,15 @@ Current exit-criteria evidence:
 
 ## Phase 3 — JavaScript runtime
 
-Status: **Active for binding design; engine name exists, binding and implementation do not**.
+Status: **Active; first binding RFC drafted and internally reviewed, normative adoption and implementation pending**.
 
 Goals: specify and implement controlled JavaScript execution while preserving the platform-neutral source contract.
 
+Completed first design unit: [RFC 0001](../spec/rfcs/0001-javascript-execution-binding.md) proposes a restricted local ES module graph, named exports, full Source API envelope returns, synchronous module initialization, Promise completion, JSON-only value transfer and invocation-scoped capability injection. Its self-review preserves A1/U1/U2/P1/D1/D2 and Phase 2 resource limits. The [completed plan](plans/completed/2026-09-28-javascript-binding-rfc.md) records validation. The RFC is not accepted or implemented; engine feasibility and service profiles remain separate work.
+
 Exit criteria:
 
-- Review an explicit execution binding covering modules, exports, asynchronous calls, initialization, and host-service injection.
+- Review an explicit execution binding covering modules, exports, asynchronous calls, initialization, and host-service injection. **Initial draft and internal review complete in RFC 0001; acceptance and feasibility evidence remain pending.**
 - Define and test the exact host-service signatures, value encodings, and algorithm profiles needed to claim support; report unavailable required services explicitly.
 - Demonstrate sandboxing, denied authority, state isolation, cancellation, and resource-limit behavior with deterministic cases.
 - Execute representative JavaScript sources through the same source contract; document actual service and platform support without broad interoperability claims unsupported by evidence.
@@ -114,4 +116,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Draft and review one bounded Phase 3 JavaScript execution-binding RFC covering entry/module/export discovery, initialization, asynchronous completion, value/error transfer and the controlled service-injection boundary. Identify unresolved choices and required evidence, preserve the existing source/permission contract and U1/U2/P1/D1/D2 deferrals, and distinguish proposals from accepted rules. Do not implement an engine or host services in that unit, or claim full JavaScript interoperability. This next task has not begun.
+Evaluate and select the JavaScript engine for the reference runtime in a separate scoped design unit, record the durable engine decision in an ADR if justified, and perform only the smallest technical spike necessary to validate that decision against [RFC 0001](../spec/rfcs/0001-javascript-execution-binding.md#alternatives-and-implementation-considerations). Keep normative acceptance explicit and preserve the existing source/permission contract and U1/U2/P1/D1/D2 deferrals. Do not begin full JavaScript execution implementation or host-service design in that selection unit. Engine evaluation has not begun.
