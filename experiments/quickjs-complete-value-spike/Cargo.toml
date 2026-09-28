@@ -1,0 +1,10 @@
+[package]
+name = "universal-source-quickjs-complete-value-spike"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+[dependencies]
+rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader"] }
+class-bridge = { package = "universal-source-quickjs-class-bridge-spike", path = "../quickjs-class-bridge-spike" }
