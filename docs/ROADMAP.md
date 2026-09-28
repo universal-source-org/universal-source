@@ -63,7 +63,7 @@ Current exit-criteria evidence:
 
 ## Phase 3 — JavaScript runtime
 
-Status: **Active; binding RFC and fresh-realm lifecycle decision internally reviewed; no engine selected; embedding proof, normative adoption and production implementation pending**.
+Status: **Active; binding RFC and fresh-realm lifecycle decision internally reviewed; QuickJS Model B lifecycle primitives demonstrated; no engine selected; remaining feasibility, normative adoption and production implementation pending**.
 
 Goals: specify and implement controlled JavaScript execution while preserving the platform-neutral source contract.
 
@@ -74,6 +74,8 @@ The [engine evaluation](reviews/2026-09-28-javascript-engine-evaluation.md) comp
 The [focused Boa ownership review](reviews/2026-09-28-boa-reaction-ownership.md) records Outcome B. Public callback records preserve `.then` and `await` registration tokens, but opaque future jobs and absent handlers prevent complete pre-execution attribution; callback substitution changes child Promise state and can still execute source through species resolvers. That experiment left F1 unresolved under the persistent-realm proposal. Fourteen diagnostic tests pass in an isolated crate; no Boa engine selection, ADR, RFC amendment or production change follows. See the [completed plan](plans/completed/2026-09-28-boa-reaction-ownership.md).
 
 The [lifecycle decision](reviews/2026-09-28-javascript-lifecycle-decision.md) compares Models A–E and chooses fresh realms per invocation, independent of the unchanged full-envelope return model. Logical instances reuse immutable snapshots, but mutable module/global/intrinsic state never crosses calls. Whole-realm retirement eliminates the proposed need for selective stale-reaction revocation; direct settlement observation, source quiescence and native delivery gating remain required. F1 now has an explicit proposed lifecycle resolution, not an engine implementation proof. RFC 0001 is narrowly revised and remains unaccepted; [validation](plans/completed/2026-09-28-javascript-lifecycle-decision.md) reruns unchanged baseline and experiment suites.
+
+The [QuickJS fresh-realm lifecycle spike](reviews/2026-09-28-quickjs-lifecycle-spike.md) records **Outcome A**: public pinned rquickjs/QuickJS-NG APIs support the demonstrated Model B lifetime and terminal primitives using a dedicated runtime/context per invocation. Fifteen behavior tests and three compile-fail checks cover retirement, roots, pending/chained jobs, late delivery, setup failures, interruption and non-executing extraction. Context-only destruction is explicitly disproved by a negative control. No engine selection, RFC change or production behavior follows; the [completed plan](plans/completed/2026-09-28-quickjs-lifecycle-spike.md) records validation and limits. Full module capture, global hardening and other engine-selection evidence remain separate.
 
 Exit criteria:
 
@@ -122,4 +124,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Review and minimally prove the revised **fresh-realm lifecycle** against the existing QuickJS-NG/rquickjs embedding path, as scoped in the [decision review](reviews/2026-09-28-javascript-lifecycle-decision.md#engine-implications-and-next-unit). Trace load-validation and per-call realms, captured functions, jobs, roots and host resolvers through completion/interruption; prove that late native completions cannot reenter a retired realm and every later call resets mutable state. Review repeated module instantiation and capture-before-evaluation through public APIs without implementing a production loader. Preserve the old experiments as counterexample evidence. This is neither a broad survey nor engine selection or production execution. If the new lifetime model exposes an incompatibility, resolve that specific RFC issue first. Other engine feasibility gaps, service profiles, RFC acceptance and platform evidence remain separate.
+Review and minimally prove **module instantiation and operation-export capture** through the pinned QuickJS-NG/rquickjs public embedding APIs, as scoped in the [lifecycle spike review](reviews/2026-09-28-quickjs-lifecycle-spike.md#conclusion-and-next-evidence-gap). Determine whether directly declared operation functions can be captured before any evaluation and checked after evaluation under RFC §2. The lifecycle experiment's post-evaluation reads are not an alternate production rule. Use fixed local modules and report any precise blocker; do not build the production loader, select an engine, reopen Model B or begin production execution. Other global-hardening, resource, service-profile, RFC-acceptance and platform evidence stays separate.
