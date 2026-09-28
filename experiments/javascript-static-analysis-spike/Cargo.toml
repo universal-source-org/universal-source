@@ -1,0 +1,13 @@
+[package]
+name = "universal-source-javascript-static-analysis-spike"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+# Standalone parser evidence only; Boa engine is not a dependency.
+[dependencies]
+boa_parser = { version = "=0.22.0", default-features = false }
+boa_ast = { version = "=0.22.0", default-features = false }
+boa_interner = { version = "=0.22.0", default-features = false }
+rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader"] }
