@@ -6,7 +6,7 @@
 
 [简体中文](./README.zh-CN.md) · [Specification v0.1 draft](./spec/README.md) · [Minimal JSON source](./examples/json/minimal/README.md)
 
-Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative runtime](./runtime/README.md) with loading, operation dispatch, returned-origin checks, lifecycle-managed instances, and execution of 34 conformance cases. Lifecycle limits and cooperative cancellation policies are documented; Phase 2 remains active pending a closure audit.
+Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative runtime](./runtime/README.md) with loading, operation dispatch, returned-origin checks, lifecycle-managed instances, and execution of 34 conformance cases. The [Phase 2 closure review](./docs/reviews/2026-09-28-phase-2-closure-review.md) accepts this bounded static profile with documented host policies and limitations. Phase 3 is active for JavaScript binding design; JavaScript execution is not implemented.
 
 ## The contract
 

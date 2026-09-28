@@ -6,7 +6,7 @@
 
 [English](./README.md) · [v0.1 规范草案](./spec/README.md) · [最小 JSON 源](./examples/json/minimal/README.md)
 
-Universal Source 的目标是让同一份内容源在 **Android、Android TV、iOS、iPadOS、tvOS、macOS、Windows 和 Linux** 上运行。这是项目目标，并不代表目前已支持这些平台。仓库当前提供经过审查的 v0.1 草案、示例、一致性测试数据，以及 [Rust 声明式运行时](./runtime/README.md)，支持加载、操作分发、返回 URL 的来源权限检查和实例生命周期管理，并执行 34 个一致性案例。生命周期资源限额与协作式取消策略已有文档；第二阶段仍在进行，待完成收尾审查。
+Universal Source 的目标是让同一份内容源在 **Android、Android TV、iOS、iPadOS、tvOS、macOS、Windows 和 Linux** 上运行。这是项目目标，并不代表目前已支持这些平台。仓库当前提供经过审查的 v0.1 草案、示例、一致性测试数据，以及 [Rust 声明式运行时](./runtime/README.md)，支持加载、操作分发、返回 URL 的来源权限检查和实例生命周期管理，并执行 34 个一致性案例。[第二阶段收口审查](./docs/reviews/2026-09-28-phase-2-closure-review.md)已确认这一有界静态实现满足阶段退出条件，并记录了宿主策略与限制。第三阶段进入 JavaScript 绑定设计，尚未实现 JavaScript 执行。
 
 ## 核心契约
 

@@ -1,6 +1,6 @@
 # Roadmap
 
-**Current active phase: Phase 2 — Declarative reference runtime.** Phases 0 and 1 are complete. The [closure review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline, explicit deferrals, and implementation boundaries. Rust loading, dispatch, returned-origin checks, instance lifecycle/isolation, and execution of 34 authored cases are implemented. v0.1 is not stable or released.
+**Current active phase: Phase 3 — JavaScript runtime, beginning with binding design.** Phases 0, 1 and 2 are complete. The [Phase 1 review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline; the [Phase 2 closure review](reviews/2026-09-28-phase-2-closure-review.md) accepts the bounded Rust static declarative runtime and its host-policy boundaries. All 34 authored cases execute through managed instances. JavaScript execution is not implemented. v0.1 is not stable or released.
 
 This roadmap sequences work, not release dates or permission to implement future phases. Keep completed work intact. Update phase status and supporting evidence when exit criteria are met. A phase transition is a deliberate repository update; it never implies a tag, release, push, or repository-setting change.
 
@@ -39,13 +39,13 @@ Exit criteria:
 
 ## Phase 2 — Declarative reference runtime
 
-Status: **Active; loading, dispatch, static lifecycle/isolation, limits, and 34-case execution implemented; closure audit remains**.
+Status: **Complete for the bounded static declarative profile; closure accepted**.
 
 Goals: implement the existing static declarative contract as the first small reference runtime. The reference implementation uses Rust under [ADR 0002](decisions/0002-reference-runtime-language.md); the specification remains language-neutral.
 
 Use the [closure handoff](reviews/2026-09-28-phase-1-closure-review.md#phase-2-implementation-boundary) when designing the loader and harness. Deferred reporting/precedence/parser questions are not permission to invent portable behavior; document implementation policies and keep them distinct from contract assertions.
 
-Completed unit: the [Rust loader](../runtime/README.md) validates manifests with the authoritative schema and semantic rules, resolves contained entries, validates all static data/references, enforces finite input budgets, and returns host-facing diagnostics. Loading tests and independent conformance checks pass. The second completed unit adds the five-operation dispatcher, result validation, exact returned-origin checks, and a production-runtime harness. The lifecycle unit adds instance-local serialization, cooperative deadlines/cancellation, exactly-one publication, quiescent disposal, checked invocation budgets and unsafe-context handling. All 34 unchanged authored cases execute through the managed path and pass. Limits and remaining host responsibilities are documented; this is not an automatic phase transition.
+Completed unit: the [Rust loader](../runtime/README.md) validates manifests with the authoritative schema and semantic rules, resolves contained entries, validates all static data/references, enforces finite input budgets, and returns host-facing diagnostics. Loading tests and independent conformance checks pass. The second completed unit adds the five-operation dispatcher, result validation, exact returned-origin checks, and a production-runtime harness. The lifecycle unit adds instance-local serialization, cooperative deadlines/cancellation, exactly-one publication, quiescent disposal, checked invocation budgets and unsafe-context handling. All 34 unchanged authored cases execute through the managed path and pass. The [closure review](reviews/2026-09-28-phase-2-closure-review.md) explicitly assesses the implementation, limits and remaining host responsibilities and accepts this phase transition.
 
 Exit criteria:
 
@@ -56,14 +56,14 @@ Exit criteria:
 
 Current exit-criteria evidence:
 
-- Loading/dispatch/results: implemented; loader, operation and envelope tests pass.
-- Containment/permissions/isolation/lifecycle/limits: implemented for bounded static data; synchronization and failure tests pass. Cooperative checkpoint latency, host-owned process memory, stable loading directories, and absent network consumers remain explicit boundaries to assess in closure.
-- Example/conformance harness: all 34 authored cases pass through production managed instances with default finite limits; Python structural checks remain independent.
-- Scope/gaps: documented in the runtime guide and current architecture. A joint Phase 2 closure review has not yet audited the accumulated evidence and host obligations; Phase 2 remains active.
+- Loading/dispatch/results: **met**; schema and semantic validation, all five operations and envelope/error tests have been reviewed against normative requirements.
+- Containment/permissions/isolation/lifecycle/limits: **met for bounded static execution**; resolved containment, exact grants, synchronization, interruption, disposal and budget tests support closure. Cooperative checkpoint latency, host-owned process memory and stable loading directories remain explicit host-policy boundaries. Network consumers remain separate future responsibilities.
+- Example/conformance harness: **met**; all 34 unchanged authored cases pass through production managed instances with default finite limits; Python structural checks remain independent.
+- Scope/gaps: **met**; the runtime guide, current architecture and closure review distinguish implementation, local policies, deferred portability questions and future work. Closure does not claim full v0.1, consumer or platform conformance.
 
 ## Phase 3 — JavaScript runtime
 
-Status: **Planned; engine name exists, binding and implementation do not**.
+Status: **Active for binding design; engine name exists, binding and implementation do not**.
 
 Goals: specify and implement controlled JavaScript execution while preserving the platform-neutral source contract.
 
@@ -114,4 +114,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Perform one scoped Phase 2 closure audit: map the loader, dispatcher, lifecycle/isolation implementation and tests to every static-profile obligation and exit criterion; review cooperative cancellation latency, memory/response bounds, filesystem assumptions and embedding-host responsibilities; rerun the documented checks; record any gaps and decide phase status explicitly. Preserve U1/U2/P1/D1/D2 deferrals and the unchanged authored cases. Do not implement JavaScript, consumers, adapters or platform integration during that audit. This review has not started; Phase 2 remains active.
+Draft and review one bounded Phase 3 JavaScript execution-binding RFC covering entry/module/export discovery, initialization, asynchronous completion, value/error transfer and the controlled service-injection boundary. Identify unresolved choices and required evidence, preserve the existing source/permission contract and U1/U2/P1/D1/D2 deferrals, and distinguish proposals from accepted rules. Do not implement an engine or host services in that unit, or claim full JavaScript interoperability. This next task has not begun.
