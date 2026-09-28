@@ -63,11 +63,13 @@ Current exit-criteria evidence:
 
 ## Phase 3 — JavaScript runtime
 
-Status: **Active; first binding RFC drafted and internally reviewed, normative adoption and implementation pending**.
+Status: **Active; binding RFC drafted and internally reviewed; initial engine evaluation complete with no selection; normative adoption and production implementation pending**.
 
 Goals: specify and implement controlled JavaScript execution while preserving the platform-neutral source contract.
 
 Completed first design unit: [RFC 0001](../spec/rfcs/0001-javascript-execution-binding.md) proposes a restricted local ES module graph, named exports, full Source API envelope returns, synchronous module initialization, Promise completion, JSON-only value transfer and invocation-scoped capability injection. Its self-review preserves A1/U1/U2/P1/D1/D2 and Phase 2 resource limits. The [completed plan](plans/completed/2026-09-28-javascript-binding-rfc.md) records validation. The RFC is not accepted or implemented; engine feasibility and service profiles remain separate work.
+
+The [engine evaluation](reviews/2026-09-28-javascript-engine-evaluation.md) compares QuickJS/QuickJS-NG, Boa, V8 and JavaScriptCore. The isolated QuickJS-NG spike proves several primitives but reproduces retained Promise/await reactions crossing the proposed terminal boundary. Outcome B: no engine selected, no engine ADR, and no RFC acceptance. The [completed plan](plans/completed/2026-09-28-javascript-engine-evaluation.md) records baseline and spike validation. Desktop evidence establishes no mobile or other-platform support.
 
 Exit criteria:
 
@@ -116,4 +118,4 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Evaluate and select the JavaScript engine for the reference runtime in a separate scoped design unit, record the durable engine decision in an ADR if justified, and perform only the smallest technical spike necessary to validate that decision against [RFC 0001](../spec/rfcs/0001-javascript-execution-binding.md#alternatives-and-implementation-considerations). Keep normative acceptance explicit and preserve the existing source/permission contract and U1/U2/P1/D1/D2 deferrals. Do not begin full JavaScript execution implementation or host-service design in that selection unit. Engine evaluation has not begun.
+Resolve the evaluation's [F1 retained-reaction ownership issue](reviews/2026-09-28-javascript-engine-evaluation.md#rfc-feedback-and-smallest-follow-up) before production execution. Run only a focused Boa callback/job ownership experiment for queued and unqueued `.then`/`await` reactions across synthetic invocations, and review whether RFC 0001 can be implemented faithfully through supported hooks. If not, document the necessary engine extension or independently justified RFC revision; do not silently relax terminal timing or persistent instance state. Engine selection still requires the remaining control/hardening/build evidence. Keep RFC acceptance explicit and preserve A1/U1/U2/P1/D1/D2 and Phase 2 resource limits. No full JavaScript runtime or host-service implementation is authorized by this follow-up.
