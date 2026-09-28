@@ -1,26 +1,41 @@
 mod support;
 use serde_json::{Value, json};
 use std::{fs, path::Path};
-use universal_source_runtime::{EffectiveGrants, LoadLimits, LoadedSource, load};
+use universal_source_runtime::{
+    CallLimits, Cancellation, EffectiveGrants, Instance, LoadLimits, load,
+};
 
-fn example() -> LoadedSource {
-    load(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../examples/json/minimal"),
-        LoadLimits::default(),
+fn example() -> Instance {
+    Instance::new(
+        load(
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../examples/json/minimal"),
+            LoadLimits::default(),
+        )
+        .unwrap(),
+        CallLimits::default(),
     )
     .unwrap()
 }
-fn custom(operations: Value, entry: Value, origins: Value) -> LoadedSource {
+fn custom(operations: Value, entry: Value, origins: Value) -> Instance {
     let directory = tempfile::tempdir().unwrap();
-    let mut manifest = example().manifest().clone();
+    let mut manifest = example().source().manifest().clone();
     manifest["capabilities"]["operations"] = operations;
     manifest["permissions"]["network"] = origins;
     fs::write(directory.path().join("manifest.json"), manifest.to_string()).unwrap();
     fs::write(directory.path().join("source.json"), entry.to_string()).unwrap();
-    load(directory.path(), LoadLimits::default()).unwrap()
+    Instance::new(
+        load(directory.path(), LoadLimits::default()).unwrap(),
+        CallLimits::default(),
+    )
+    .unwrap()
 }
-fn call(source: &LoadedSource, op: &str, input: Value) -> Value {
-    let output = source.invoke(op, &input, &EffectiveGrants::default());
+fn invoke(source: &Instance, op: &str, input: &Value, grants: &EffectiveGrants) -> Value {
+    source
+        .invoke(op, input, grants, &Cancellation::default())
+        .unwrap()
+}
+fn call(source: &Instance, op: &str, input: Value) -> Value {
+    let output = invoke(source, op, &input, &EffectiveGrants::default());
     support::envelope(&output);
     output
 }
@@ -119,15 +134,19 @@ fn exact_search_empty_pages_and_no_hidden_sequence() {
 #[test]
 fn play_lookup_before_denial_and_grants_are_per_call() {
     let source = example();
-    let grants = EffectiveGrants::new(&source, source.requested_origins()).unwrap();
+    let grants =
+        EffectiveGrants::new(source.source(), source.source().requested_origins()).unwrap();
     code(call(&source, "play", json!({"id":"missing"})), "NOT_FOUND");
     code(
         call(&source, "play", json!({"id":"demo-main"})),
         "PERMISSION_DENIED",
     );
-    let permitted = source.invoke("play", &json!({"id":"demo-main"}), &grants);
+    let permitted = invoke(&source, "play", &json!({"id":"demo-main"}), &grants);
     support::envelope(&permitted);
-    assert_eq!(permitted["data"], source.entry()["play"]["demo-main"]);
+    assert_eq!(
+        permitted["data"],
+        source.source().entry()["play"]["demo-main"]
+    );
     code(
         call(&source, "play", json!({"id":"demo-main"})),
         "PERMISSION_DENIED",
@@ -145,7 +164,8 @@ fn all_returned_posters_are_checked_but_opaque_text_is_not() {
         }),
         json!(["https://images.example.invalid"]),
     );
-    let grants = EffectiveGrants::new(&source, source.requested_origins()).unwrap();
+    let grants =
+        EffectiveGrants::new(source.source(), source.source().requested_origins()).unwrap();
     for (op, input) in [
         ("home", json!({})),
         ("category", json!({"id":"poster"})),
@@ -153,7 +173,7 @@ fn all_returned_posters_are_checked_but_opaque_text_is_not() {
         ("detail", json!({"id":"url"})),
     ] {
         code(call(&source, op, input.clone()), "PERMISSION_DENIED");
-        assert_eq!(source.invoke(op, &input, &grants)["ok"], true);
+        assert_eq!(invoke(&source, op, &input, &grants)["ok"], true);
     }
     assert_eq!(
         call(&source, "category", json!({"id":"poster","page":2}))["ok"],
@@ -174,9 +194,10 @@ fn normalized_origins_exact_matching_and_no_implicit_authority() {
             json!({"play":{"p":{"url":url}}}),
             json!([origin]),
         );
-        let grants = EffectiveGrants::new(&source, source.requested_origins()).unwrap();
+        let grants =
+            EffectiveGrants::new(source.source(), source.source().requested_origins()).unwrap();
         assert_eq!(
-            source.invoke("play", &json!({"id":"p"}), &grants)["data"]["url"],
+            invoke(&source, "play", &json!({"id":"p"}), &grants)["data"]["url"],
             url
         );
     }
@@ -192,9 +213,10 @@ fn normalized_origins_exact_matching_and_no_implicit_authority() {
             json!({"play":{"p":{"url":url}}}),
             json!(["https://example.org"]),
         );
-        let grants = EffectiveGrants::new(&source, source.requested_origins()).unwrap();
+        let grants =
+            EffectiveGrants::new(source.source(), source.source().requested_origins()).unwrap();
         code(
-            source.invoke("play", &json!({"id":"p"}), &grants),
+            invoke(&source, "play", &json!({"id":"p"}), &grants),
             "PERMISSION_DENIED",
         );
     }
@@ -208,16 +230,17 @@ fn grant_setup_is_separate_and_cannot_bypass_manifest_requests() {
         vec!["https://media.example.invalid:443".into()],
         vec!["https://media.example.invalid".into(); 2],
     ] {
-        assert!(EffectiveGrants::new(&source, &network).is_err());
+        assert!(EffectiveGrants::new(source.source(), &network).is_err());
     }
     let other = custom(
         json!(["play"]),
         json!({"play":{"p":{"url":"https://media.example.invalid/x"}}}),
         json!([]),
     );
-    let grants = EffectiveGrants::new(&source, source.requested_origins()).unwrap();
+    let grants =
+        EffectiveGrants::new(source.source(), source.source().requested_origins()).unwrap();
     code(
-        other.invoke("play", &json!({"id":"p"}), &grants),
+        invoke(&other, "play", &json!({"id":"p"}), &grants),
         "PERMISSION_DENIED",
     );
 }

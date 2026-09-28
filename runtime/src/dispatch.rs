@@ -38,12 +38,16 @@ impl EffectiveGrants {
     }
 }
 
-fn error(code: &str) -> Value {
+pub(crate) fn error(code: &str) -> Value {
     let message = match code {
         "UNSUPPORTED_OPERATION" => "Operation is not declared",
         "INVALID_ARGUMENT" => "Invalid operation input",
         "NOT_FOUND" => "Unknown identifier",
         "PERMISSION_DENIED" => "Resource origin is not permitted",
+        "CANCELLED" => "Call cancelled",
+        "TIMEOUT" => "Call deadline expired",
+        "RESOURCE_LIMIT" => "Call resource limit",
+        "SOURCE_ERROR" => "Source execution failed",
         _ => "Invalid source result",
     };
     json!({"ok": false, "error": {"code": code, "message": message}})
@@ -85,12 +89,23 @@ fn input_page(operation: &str, input: &Value) -> Result<u64, ()> {
     Ok(n as u64)
 }
 
+pub(crate) fn declared(source: &LoadedSource, operation: &str) -> bool {
+    OPERATIONS.contains(&operation) && source.entry.get(operation).is_some()
+}
+
 impl LoadedSource {
-    /// Independent synchronous call on validated data under ready-source preconditions.
-    /// Hosts supply current grants on every call. No scheduling or lifecycle is implied.
-    pub fn invoke(&self, operation: &str, input: &Value, grants: &EffectiveGrants) -> Value {
-        if !OPERATIONS.contains(&operation) || self.entry.get(operation).is_none() {
+    pub(crate) fn invoke_checked(
+        &self,
+        operation: &str,
+        input: &Value,
+        grants: &EffectiveGrants,
+        check: &impl Fn() -> Result<(), &'static str>,
+    ) -> Value {
+        if !declared(self, operation) {
             return error("UNSUPPORTED_OPERATION");
+        }
+        if let Err(code) = check() {
+            return error(code);
         }
         let Ok(page) = input_page(operation, input) else {
             return error("INVALID_ARGUMENT");
@@ -123,7 +138,10 @@ impl LoadedSource {
             }
             _ => unreachable!("vocabulary checked"),
         };
-        self.finish(operation, input, page, data, grants)
+        if let Err(code) = check() {
+            return error(code);
+        }
+        self.finish(operation, input, page, data, grants, check)
     }
 
     fn finish(
@@ -133,12 +151,19 @@ impl LoadedSource {
         page: u64,
         data: Value,
         grants: &EffectiveGrants,
+        check: &impl Fn() -> Result<(), &'static str>,
     ) -> Value {
         // Local implementation order only. U2 is not a portable precedence decision.
         if entry::result(operation, &data, input, page, &self.entry).is_err() {
             return error("INVALID_RESULT");
         }
+        if let Err(code) = check() {
+            return error(code);
+        }
         let allowed = |raw: &Value| {
+            if check().is_err() {
+                return false;
+            }
             raw.as_str()
                 .and_then(|s| urls::resource_origin(s).ok())
                 .is_some_and(|origin| {
@@ -154,6 +179,9 @@ impl LoadedSource {
             "play" => allowed(&data["url"]),
             _ => false,
         };
+        if let Err(code) = check() {
+            return error(code);
+        }
         if !permitted {
             return error("PERMISSION_DENIED");
         }
@@ -176,7 +204,14 @@ mod tests {
             json!({"categories":[],"items":null}),
             json!({"categories":[],"items":[{"id":"x","title":""}]}),
         ] {
-            let outcome = source.finish("home", &json!({}), 1, data, &EffectiveGrants::default());
+            let outcome = source.finish(
+                "home",
+                &json!({}),
+                1,
+                data,
+                &EffectiveGrants::default(),
+                &|| Ok(()),
+            );
             assert_eq!(outcome["error"]["code"], "INVALID_RESULT");
             assert!(outcome.get("data").is_none());
         }

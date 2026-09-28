@@ -1,6 +1,8 @@
-//! Static declarative loading and ready-source calls. No network I/O or lifecycle scheduler.
+//! Static declarative loading, dispatch, and instance-local lifecycle. No network I/O.
 mod dispatch;
 pub use dispatch::{EffectiveGrants, InvalidGrants};
+mod lifecycle;
+pub use lifecycle::{CallLimits, Cancellation, Instance, LifecycleError};
 mod entry;
 mod json;
 mod urls;
@@ -60,7 +62,7 @@ impl Default for LoadLimits {
     }
 }
 
-/// Immutable validated data supporting independent ready-source calls. Not a permission grant.
+/// Immutable validated data. Move into an Instance for managed calls. Not a permission grant.
 /// Debug deliberately omits source data, which may contain credentials in headers.
 pub struct LoadedSource {
     manifest: Value,

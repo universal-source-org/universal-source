@@ -1,7 +1,9 @@
 mod support;
 use serde_json::{Value, json};
 use std::{collections::HashSet, fs, path::Path};
-use universal_source_runtime::{EffectiveGrants, LoadLimits, load};
+use universal_source_runtime::{
+    CallLimits, Cancellation, EffectiveGrants, Instance, LoadLimits, load,
+};
 
 #[test]
 fn execute_authored_declarative_cases() {
@@ -50,8 +52,15 @@ fn execute_authored_declarative_cases() {
                 .map(|v| v.as_str().unwrap().to_owned())
                 .collect::<Vec<_>>();
             let grants = EffectiveGrants::new(&source, &network).expect("grant setup failed");
-            let actual =
-                source.invoke(case["operation"].as_str().unwrap(), &case["input"], &grants);
+            let instance = Instance::new(source, CallLimits::default()).expect("instance setup");
+            let actual = instance
+                .invoke(
+                    case["operation"].as_str().unwrap(),
+                    &case["input"],
+                    &grants,
+                    &Cancellation::default(),
+                )
+                .expect("ready instance");
             support::envelope(&actual);
             if let Some(expected) = case["expect"].get("result") {
                 assert!(

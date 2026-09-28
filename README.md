@@ -6,7 +6,7 @@
 
 [简体中文](./README.zh-CN.md) · [Specification v0.1 draft](./spec/README.md) · [Minimal JSON source](./examples/json/minimal/README.md)
 
-Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative runtime](./runtime/README.md) with loading, independent operation dispatch, returned-origin checks, and execution of 34 conformance cases. Broader lifecycle enforcement remains unfinished.
+Universal Source aims to let one content source run across **Android, Android TV, iOS, iPadOS, tvOS, macOS, Windows, and Linux**. This is the project goal, not a claim of current platform support. The repository contains the reviewed v0.1 draft, examples, conformance data, and a [Rust declarative runtime](./runtime/README.md) with loading, operation dispatch, returned-origin checks, lifecycle-managed instances, and execution of 34 conformance cases. Lifecycle limits and cooperative cancellation policies are documented; Phase 2 remains active pending a closure audit.
 
 ## The contract
 
@@ -60,7 +60,7 @@ This project stays in one monorepo:
 | Directory | Purpose |
 | --- | --- |
 | [`spec/`](./spec/README.md) | Independent specification, manifest schema, and RFCs. |
-| [`runtime/`](./runtime/README.md) | Rust static loader, dispatcher, permission checks, and execution tests. |
+| [`runtime/`](./runtime/README.md) | Rust static loader, dispatcher, lifecycle/permission checks, and execution tests. |
 | [`examples/`](./examples/json/minimal/README.md) | Small sources illustrating the contract. |
 | [`conformance/`](./conformance/README.md) | Manifest validation and authored declarative fixtures executed by the Rust harness. |
 | [`docs/`](./docs/PROJECT_CHARTER.md) | Project charter, principles, current architecture, roadmap, decisions, and task plans. |

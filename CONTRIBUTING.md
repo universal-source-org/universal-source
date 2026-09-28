@@ -24,7 +24,7 @@ The repository contains a specification draft, JSON Schema, static example, and 
 python -m unittest discover -s conformance -p 'test_*.py' -v
 ```
 
-This uses a real Draft 2020-12 validator to check the schema, positive/negative manifest fixtures, and the existing example manifest. It also validates the [declarative operation fixtures](conformance/declarative/README.md), their source references, effective grants, and stored success snapshots. The [Rust runtime](runtime/README.md) loads static packages, dispatches independent ready-source calls, enforces returned-origin grants, and executes the 34 operation cases. Broader lifecycle enforcement remains unimplemented. Do not describe schema checks as tested source execution.
+This uses a real Draft 2020-12 validator to check the schema, positive/negative manifest fixtures, and the existing example manifest. It also validates the [declarative operation fixtures](conformance/declarative/README.md), their source references, effective grants, and stored success snapshots. The [Rust runtime](runtime/README.md) loads static packages, dispatches lifecycle-managed calls, enforces returned-origin grants and documented invocation limits, and executes the 34 operation cases. Separate Rust tests cover instance serialization, cancellation/deadline races, disposal, and isolation. Do not describe schema checks as tested source execution.
 
 For runtime changes, use Rust/Cargo 1.96 or newer and run:
 
