@@ -95,6 +95,8 @@ The [complete value-boundary spike](reviews/2026-09-28-quickjs-complete-value-sp
 
 The [resource-enforcement spike](reviews/2026-09-29-quickjs-resource-spike.md) records **Outcome B — blocker demonstrated**. Eleven tests show local CPU/module/job interruption, controlled heap rejection, bounded recursion and RegExp matching interruption. A separate local forward-backreference compiler reproducer performs long native work with zero interrupt callbacks; its larger case requires an external safety kill despite an 8 MiB engine limit. The kill is not engine-control or teardown evidence. Full resource classification and the remaining exhaustion matrix stay open; scope expansion stopped at this blocker. All prior evidence is preserved; see the [completed plan](plans/completed/2026-09-29-quickjs-resource-spike.md).
 
+The [RegExp compilation remedy review](reviews/2026-09-29-quickjs-regexp-admission-review.md) records **Outcome A — pre-admission viable at design level**, without changing that blocker. RFC 0001 requires finite published bounds and eventual interruption, not mid-compile polling. A host-published pattern length bound can make each non-polling compile a bounded slice: a byte-level preflight for literals, plus a trusted gate with deadline checks for dynamic construction. The pinned compile paths audited are at most quadratic. An eight-test [route probe](../experiments/quickjs-regexp-admission-spike/README.md) finds a finite wrap set: the constructor, `String.prototype.match`/`matchAll`/`search`, `RegExp.prototype.compile`, and generic-receiver `@@split`/`@@matchAll`. Nothing is implemented. Process containment is the ranked fallback; no upstream remedy is locally evidenced. See the [completed plan](plans/completed/2026-09-29-quickjs-regexp-admission-review.md).
+
 Exit criteria:
 
 - Review an explicit execution binding covering modules, exports, asynchronous calls, initialization, and host-service injection. **Initial draft and F1 fresh-realm revision internally reviewed in RFC 0001; embedding feasibility and acceptance remain pending.**
@@ -142,4 +144,13 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Review a specific remedy for **RegExp compilation interruption/containment** against the [local resource blocker](reviews/2026-09-29-quickjs-resource-spike.md) and unchanged RFC §§5/7/10. Identify an actual documented control or an explicitly proposed upstream/version/containment change before resuming the full resource proof. The existing interrupt hook works for tested JavaScript and RegExp matching, but the compiler reproducer bypasses it for long native work. Do not count the external watchdog as engine support or weaken the RFC to fit the pin. No remedy implementation, dependency upgrade or engine selection is authorized by this result. Complete module/path containment and final parser/preflight strategy remain subsequent architecture-critical gaps; services, platform/distribution and conformance remain separate.
+Run the **RegExp admission feasibility implementation spike** specified in the [remedy review](reviews/2026-09-29-quickjs-regexp-admission-review.md#next-task). It must be experiment-only and use pinned public APIs, and it must:
+
+- build a host-native RegExp facade and the finite wrap set, with single ES2023-order coercion, measurement and a deadline check at every gate;
+- prove the native constructor is unreachable;
+- turn every inventoried route, including the preserved 64,000-reference reproducer, into a trusted-latch uncatchable `RESOURCE_LIMIT` with zero native compile;
+- add exact-byte, fail-closed literal preflight before module declaration;
+- calibrate worst-case families and flags;
+- audit matching checkpoint intervals.
+
+If any route cannot be gated, record Outcome B and escalate to a process-containment review. Do not count the external watchdog as engine support, weaken the RFC, patch or upgrade the engine, or select an engine or parser. Complete module/path containment and final parser/preflight strategy remain subsequent architecture-critical gaps; services, platform/distribution and conformance remain separate.
