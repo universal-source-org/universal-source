@@ -1,0 +1,15 @@
+[package]
+name = "universal-source-quickjs-integrated-resource-failure-spike"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+[dependencies]
+rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader"] }
+admission = { package = "universal-source-quickjs-regexp-admission-impl-spike", path = "../quickjs-regexp-admission-impl-spike" }
+value-boundary = { package = "universal-source-quickjs-complete-value-spike", path = "../quickjs-complete-value-spike" }
+
+# Generated and verified by run.py. Never used by production or older experiments.
+[patch.crates-io]
+rquickjs-sys = { path = "build/sys" }
