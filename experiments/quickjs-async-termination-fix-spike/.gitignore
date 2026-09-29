@@ -1,0 +1,3 @@
+# Generated, gitignored engine copies and binaries. The pinned/committed
+# dependency is NEVER modified or committed by this experiment.
+build/
