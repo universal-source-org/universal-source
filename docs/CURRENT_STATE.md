@@ -9,8 +9,9 @@ conflicts with an authority, surface the conflict and update the index explicitl
 ## 1. Project position
 
 Phase 3 — JavaScript binding design and feasibility — is active.
-Snapshot verified 2026-09-30 against pre-documentation HEAD
-`222029b74c278daa61fa3345fc0c131c6f449af3` on `main` (clean tree).
+Task baseline verified 2026-09-30 at
+`98c69242d35f79918688b11c3b144300ea121545` on `main` (clean tree).
+The completed public-API follow-up is recorded below; no active plan remains.
 Always inspect live Git status/HEAD and active plans; this baseline is not a pin.
 
 Universal Source defines a portable content-source/host contract for independent
@@ -38,8 +39,8 @@ These are the working constraints of the proposed binding, not RFC acceptance.
   filesystem authority; exact services remain separate work
   ([RFC §8](../spec/rfcs/0001-javascript-execution-binding.md#8-host-capability-injection-and-ownership)).
 - **Candidate, not selection:** QuickJS-NG/rquickjs remains strongest-evidenced.
-  Consolidated Outcome A means continue toward selection; latest integrated
-  Outcome B leaves resource closure open ([latest review](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md#decision)).
+  Consolidated Outcome A means continue toward selection; public-API follow-up
+  Outcome B leaves resource closure open ([latest review](reviews/2026-09-30-quickjs-public-api-failure-classification.md#decision-and-only-next-task)).
 - **Conditional mechanisms:** RegExp needs pre-admission, not assumed compiler
   interruption; the async-stop patch is experiment-only, not an authorized
   maintained fork ([consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md)).
@@ -58,7 +59,7 @@ Statuses describe local feasibility evidence, not production conformance.
 | §6 value boundary | Experimental proof: class-gated, non-executing bidirectional transfer; exhaustion qualified below | [Complete values](reviews/2026-09-28-quickjs-complete-value-spike.md) |
 | RegExp admission | Viable with condition: literal preflight + trusted dynamic gate + protected native constructor | [Admission implementation](reviews/2026-09-29-quickjs-regexp-admission-impl-spike.md) |
 | Promise/async hard stop | Experimental proof for restricted profile, only with local patch | [Async fix](reviews/2026-09-29-quickjs-async-termination-fix-spike.md) |
-| Integrated resource/failure handling | Blocked: allocator catch continuation; engine ceiling may bypass trusted latch | [Integrated Outcome B](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md#failure-and-resource-boundary) |
+| Integrated resource/failure handling | Blocked: public API cannot make allocator/heap failures a trusted no-continuation class on this path | [Public-API Outcome B](reviews/2026-09-30-quickjs-public-api-failure-classification.md) |
 | Platform embedding / production integration | Open / unimplemented | [Architecture](ARCHITECTURE.md) |
 
 ## 4. Known limitations / conditions
@@ -67,9 +68,11 @@ Statuses describe local feasibility evidence, not production conformance.
   permanent candidate policy. Matching interruption is separately evidenced.
 - The last upstream assessment found no published async-stop fix; this is dated
   evidence, not a live upstream check. The local fix is 12 edits / 11 functions.
-- A trusted allocation latch can prevent publication while source catch code
-  still runs. Engine heap rejection may occur before that latch. Do not infer a
-  trusted stop from exception text; ordinary stack errors retain ordinary semantics.
+- A trusted allocation latch prevents capability action/publication while
+  catch/finally still run. Engine heap rejection bypasses that latch and can
+  permit action/success. Public error marking is too late after host return and
+  cannot mark the null OOM fallback; heap-cap tuning and later polling do not
+  close this boundary. Ordinary/stack exceptions retain ordinary semantics.
 - Engine-accounted bytes, host/Rust allocations and §6 budgets differ; no exact
   RSS or real-time guarantee. Residual native work such as sparse `Array.join`
   still requires finite policy coverage ([latest review](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md)).
@@ -85,7 +88,7 @@ is qualified by the latest review and ROADMAP. None is closed by this index.
 
 | Gate | Status | Remaining requirement |
 | --- | --- | --- |
-| Integrated resource/failure closure | **Next** | Integrated spike completed with Outcome B; failure-classification follow-up below |
+| Integrated resource/failure closure | **Blocked** | Public-API follow-up completed with Outcome B; engine-level experiment authorization decision next |
 | Complete module/path containment | Pending | Hostile graph/path proof, stable bytes and private module denial |
 | Final parser/preflight strategy | Pending | Full restricted ES2023 / early errors / admission agreement |
 | Cross-platform / Apple embedding | Pending | Same engine/binding/patch build and representative execution proof |
@@ -93,21 +96,24 @@ is qualified by the latest review and ROADMAP. None is closed by this index.
 
 ## 6. Current task
 
-**Only next coherent task: non-production public-API failure-classification spike.**
+**Only next coherent task: allocation/heap terminal-failure experiment scope decision review.**
 
-- Status: **not started**. No technical active plan or uncommitted technical work
-  at the verified baseline. Create a scoped plan in [active plans](plans/active/)
-  when this task starts; no active plan path exists yet.
-- Predecessor: integrated resource/failure spike **completed with Outcome B**,
-  not closure. Read its [review](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md)
-  and [experiment guide](../experiments/quickjs-integrated-resource-failure-spike/README.md).
-- Discriminating question: can engine-heap and allocator failures become a
-  trusted, no-continuation terminal class through public APIs without another
-  substantive QuickJS change, while ordinary exceptions stay ordinary?
-- Scope: evidence on the existing experimental pin/patch/binding path; preserve
-  historical negative controls and report blockers. No new engine surgery,
-  production integration, contract amendment, alternative-engine spike or other
-  selection gate follows implicitly. This index does not authorize that expansion.
+- Public-API failure-classification spike: **completed, Outcome B**. See the
+  [review](reviews/2026-09-30-quickjs-public-api-failure-classification.md),
+  [experiment guide](../experiments/quickjs-integrated-resource-failure-spike/README.md)
+  and [completed plan](plans/completed/2026-09-30-quickjs-public-api-failure-classification.md).
+  Seven new tests plus the preserved 15 integrated tests pass; negative controls
+  remain reproducible. Passing diagnostic tests does not close the gate.
+- Next task status: **not started**, no active plan. Review only whether to
+  authorize a separately scoped engine-level allocation/heap terminal-failure
+  experiment, including minimum scope and acceptance criteria.
+- Minimal blocker: trusted allocator notification does not stop catch dispatch;
+  engine heap rejection has no trusted public hit hook. Error allocation can
+  itself fail. The existing async patch propagates already-uncatchable errors
+  but does not create this terminal classification.
+- No new patch implementation is authorized by this handoff. Do not expand into
+  other gates, production, contract amendment, engine selection, alternative
+  engines, helper-process/IPC design or patch ownership.
 
 ## 7. Do not do
 
@@ -125,14 +131,14 @@ are historical handoffs; use the current ROADMAP for today's sequence.
 
 | If the task concerns... | Read these first |
 | --- | --- |
-| Current execution work | Active plan if present + [integrated review](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) + [experiment guide](../experiments/quickjs-integrated-resource-failure-spike/README.md) |
+| Current failure-boundary decision | Active plan if present + [public-API review](reviews/2026-09-30-quickjs-public-api-failure-classification.md) + [integrated predecessor](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) + [experiment guide](../experiments/quickjs-integrated-resource-failure-spike/README.md) |
 | Lifecycle / job retirement | [RFC §§4–5](../spec/rfcs/0001-javascript-execution-binding.md#4-initialization-state-and-disposal) + [lifecycle proof](reviews/2026-09-28-quickjs-lifecycle-spike.md) |
 | §6 values | [RFC §6](../spec/rfcs/0001-javascript-execution-binding.md#6-value-boundary) + [complete-value review](reviews/2026-09-28-quickjs-complete-value-spike.md) |
 | Modules / paths / preflight | [RFC §1](../spec/rfcs/0001-javascript-execution-binding.md#1-package-and-module-model) + [capture](reviews/2026-09-28-quickjs-module-capture-spike.md) + [attribute follow-up](reviews/2026-09-28-javascript-import-attributes-spike.md) |
 | Hardening / ambient authority | [Global surface](reviews/2026-09-28-quickjs-global-surface-spike.md) + [compiler denial](reviews/2026-09-28-quickjs-dynamic-code-suppression-spike.md) |
 | RegExp | [Admission implementation](reviews/2026-09-29-quickjs-regexp-admission-impl-spike.md) + [integrated qualification](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) |
 | Async termination | [Async fix](reviews/2026-09-29-quickjs-async-termination-fix-spike.md) + [integrated qualification](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) |
-| Engine selection / patch ownership / platform containment | [Consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md) + [latest review](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) |
+| Engine selection / patch ownership / platform containment | [Consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md) + [latest review](reviews/2026-09-30-quickjs-public-api-failure-classification.md) |
 | Declarative runtime / portable contracts | [Runtime guide](../runtime/README.md) + [spec index](../spec/README.md) + [ADR index](decisions/README.md) |
 
 ## 9. Validation expectations

@@ -76,6 +76,9 @@ pub struct Config {
     pub fail_allocation: Option<(Phase, usize)>,
     pub single_allocation: Option<usize>,
     pub tight_heap_phase: Option<Phase>,
+    /// Diagnostic override at call entry; 0 disables only the engine ceiling.
+    /// The independent finite allocator budget remains enabled.
+    pub call_heap_limit: Option<usize>,
     pub deliver_pending: bool,
     pub input: Portable,
     pub limits: Limits,
@@ -90,6 +93,7 @@ impl Default for Config {
             fail_allocation: None,
             single_allocation: None,
             tight_heap_phase: None,
+            call_heap_limit: None,
             deliver_pending: false,
             input: Portable::Null,
             limits: Limits::default(),
@@ -323,6 +327,9 @@ pub fn invoke(source: &str, config: Config, late_token: Option<u64>) -> Report {
                 late_rejected += 1;
             }
             state.phase.set(Phase::Call);
+            if let Some(bytes) = config.call_heap_limit {
+                ffi::heap_limit(&ctx, bytes);
+            }
             if let Some(single) = config.single_allocation {
                 accounting.single.set(single);
             }
@@ -428,3 +435,6 @@ pub fn invoke(source: &str, config: Config, late_token: Option<u64>) -> Report {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod failure_classification;

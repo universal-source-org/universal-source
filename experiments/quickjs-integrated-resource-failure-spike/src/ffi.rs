@@ -1,4 +1,4 @@
-//! Four public-API boundaries, no engine-private access.
+//! Public-API boundaries, no engine-private access.
 #![allow(unsafe_code)]
 use rquickjs::{Ctx, qjs};
 
@@ -36,4 +36,15 @@ pub fn heap_limit(ctx: &Ctx<'_>, bytes: usize) {
     // SAFETY: public runtime API on the owner thread, outside engine execution.
     // A deterministic boundary fault probe; no allocator-callback reentry.
     unsafe { qjs::JS_SetMemoryLimit(qjs::JS_GetRuntime(ctx.as_raw().as_ptr()), bytes as _) }
+}
+
+#[cfg(test)]
+pub fn mark_error(ctx: &Ctx<'_>, value: &rquickjs::Value<'_>) -> (bool, bool) {
+    // SAFETY: tests supply a live value from this context, held throughout both
+    // queries and the public flag setter. No ownership transfer or VM reentry.
+    unsafe {
+        let before = qjs::JS_IsUncatchableError(value.as_raw());
+        qjs::JS_SetUncatchableError(ctx.as_raw().as_ptr(), value.as_raw());
+        (before, qjs::JS_IsUncatchableError(value.as_raw()))
+    }
 }
