@@ -1,0 +1,9 @@
+[package]
+name = "universal-source-quickjs-resource-spike"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+[dependencies]
+rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader"] }
