@@ -1,5 +1,7 @@
 # Roadmap
 
+Use [CURRENT_STATE](CURRENT_STATE.md) for the compact working-state index and task-specific evidence routes; this roadmap remains authoritative for sequencing.
+
 **Current active phase: Phase 3 — JavaScript runtime, beginning with binding design.** Phases 0, 1 and 2 are complete. The [Phase 1 review](reviews/2026-09-28-phase-1-closure-review.md) records the reviewed v0.1 draft baseline; the [Phase 2 closure review](reviews/2026-09-28-phase-2-closure-review.md) accepts the bounded Rust static declarative runtime and its host-policy boundaries. All 34 authored cases execute through managed instances. JavaScript execution is not implemented. v0.1 is not stable or released.
 
 This roadmap sequences work, not release dates or permission to implement future phases. Keep completed work intact. Update phase status and supporting evidence when exit criteria are met. A phase transition is a deliberate repository update; it never implies a tag, release, push, or repository-setting change.

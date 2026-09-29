@@ -2,6 +2,13 @@
 
 Use repository files as durable project context; do not rely on conversation history.
 
+## Start here
+
+Read [CURRENT_STATE](docs/CURRENT_STATE.md), then [ROADMAP](docs/ROADMAP.md).
+Read only the reviews routed for the current task; do not preload the historical
+archive unless performing a consolidated/closure review. Use the authorities below
+for their respective scope; CURRENT_STATE is a working index, not a contract.
+
 ## Read before substantial work
 
 1. [Project charter](docs/PROJECT_CHARTER.md): purpose, scope, and non-goals.

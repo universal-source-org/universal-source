@@ -2,6 +2,8 @@
 
 This is a snapshot of the repository's current state, not a proposed implementation design. The [specification](../spec/README.md) remains authoritative for contract details; the [roadmap](ROADMAP.md) owns sequencing and future exit criteria.
 
+Use [CURRENT_STATE](CURRENT_STATE.md) for the compact working-state index and task-specific evidence routes.
+
 ## Present artifacts and implementation status
 
 | Area | Current status | Evidence and limits |
