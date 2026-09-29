@@ -1,0 +1,18 @@
+[package]
+name = "universal-source-quickjs-regexp-admission-impl-spike"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.96"
+publish = false
+
+# Admission feasibility evidence only. Same pinned set as the route-probe spike;
+# no parser or engine is selected and Boa engine is not a dependency.
+[dependencies]
+boa_parser = { version = "=0.22.0", default-features = false }
+boa_ast = { version = "=0.22.0", default-features = false }
+boa_interner = { version = "=0.22.0", default-features = false }
+rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader"] }
+oxc_allocator = "=0.152.0"
+oxc_ast = "=0.152.0"
+oxc_parser = "=0.152.0"
+oxc_span = "=0.152.0"

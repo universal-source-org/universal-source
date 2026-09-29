@@ -97,6 +97,8 @@ The [resource-enforcement spike](reviews/2026-09-29-quickjs-resource-spike.md) r
 
 The [RegExp compilation remedy review](reviews/2026-09-29-quickjs-regexp-admission-review.md) records **Outcome A — pre-admission viable at design level**, without changing that blocker. RFC 0001 requires finite published bounds and eventual interruption, not mid-compile polling. A host-published pattern length bound can make each non-polling compile a bounded slice: a byte-level preflight for literals, plus a trusted gate with deadline checks for dynamic construction. The pinned compile paths audited are at most quadratic. An eight-test [route probe](../experiments/quickjs-regexp-admission-spike/README.md) finds a finite wrap set: the constructor, `String.prototype.match`/`matchAll`/`search`, `RegExp.prototype.compile`, and generic-receiver `@@split`/`@@matchAll`. Nothing is implemented. Process containment is the ranked fallback; no upstream remedy is locally evidenced. See the [completed plan](plans/completed/2026-09-29-quickjs-regexp-admission-review.md).
 
+The [RegExp admission implementation spike](reviews/2026-09-29-quickjs-regexp-admission-impl-spike.md) records **Outcome B — a gated stop is not guaranteed to stop source in-process**. Sixteen tests implement the facade, the trusted gate and exact-byte literal preflight. All 30 inventoried dynamic routes, including the 64,000-reference reproducer, are refused with zero native compiles. The native constructor is unreachable, coercion follows ES2023 order, and the worst compile at a candidate 4,096-unit bound is about 81–86 ms (debug). However, pinned promise machinery (the `Promise` executor, thenable resolution reached by every `await`, `Promise.all`, async generators) converts uncatchable errors into rejections. That absorbs both gate stops and engine deadline interrupts, so source can keep running after a latched stop. `await` ignores the global `Promise`, so no JavaScript facade can close the path. The finding qualifies in-process CPU enforcement generally on this pin; the resource Outcome B and its reproducer are unchanged. See the [completed plan](plans/completed/2026-09-29-quickjs-regexp-admission-impl-spike.md).
+
 Exit criteria:
 
 - Review an explicit execution binding covering modules, exports, asynchronous calls, initialization, and host-service injection. **Initial draft and F1 fresh-realm revision internally reviewed in RFC 0001; embedding feasibility and acceptance remain pending.**
@@ -144,13 +146,13 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-Run the **RegExp admission feasibility implementation spike** specified in the [remedy review](reviews/2026-09-29-quickjs-regexp-admission-review.md#next-task). It must be experiment-only and use pinned public APIs, and it must:
+Run the **process-containment review** specified in the [admission spike review](reviews/2026-09-29-quickjs-regexp-admission-impl-spike.md#next-task). It is design-level only: decide whether a per-domain child process that the host kills on deadline, cancellation or resource stop can satisfy RFC 0001 §§4, 5, 6, 7 and 10 without contract changes. It must cover:
 
-- build a host-native RegExp facade and the finite wrap set, with single ES2023-order coercion, measurement and a deadline check at every gate;
-- prove the native constructor is unreachable;
-- turn every inventoried route, including the preserved 64,000-reference reproducer, into a trusted-latch uncatchable `RESOURCE_LIMIT` with zero native compile;
-- add exact-byte, fail-closed literal preflight before module declaration;
-- calibrate worst-case families and flags;
-- audit matching checkpoint intervals.
+- classification from the host's own kill reason;
+- mapping lifecycle Model B retirement, late-delivery rejection and scoped resolvers onto process or pool lifecycle;
+- the IPC boundary for §6 values and host services, with trusted-state placement;
+- latency and resource costs;
+- platforms without helper processes (iOS, iPadOS, tvOS) and what a host there could claim;
+- whether in-process pre-admission remains required as defense in depth.
 
-If any route cannot be gated, record Outcome B and escalate to a process-containment review. Do not count the external watchdog as engine support, weaken the RFC, patch or upgrade the engine, or select an engine or parser. Complete module/path containment and final parser/preflight strategy remain subsequent architecture-critical gaps; services, platform/distribution and conformance remain separate.
+It should compare, without authorizing, engine-level alternatives: a local uncatchable check at the promise conversion sites, an upstream change, or another engine. Do not implement IPC, patch or upgrade the engine, edit the RFC, count the external watchdog as engine support, or select an engine or parser. Complete module/path containment and final parser/preflight strategy remain subsequent architecture-critical gaps; services, platform/distribution and conformance remain separate.
