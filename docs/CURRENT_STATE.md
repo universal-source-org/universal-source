@@ -10,8 +10,8 @@ conflicts with an authority, surface the conflict and update the index explicitl
 
 Phase 3 — JavaScript binding design and feasibility — is active.
 Task baseline verified 2026-09-30 at
-`98c69242d35f79918688b11c3b144300ea121545` on `main` (clean tree).
-The completed public-API follow-up is recorded below; no active plan remains.
+`06b8ea646d028cda7f869ff7f3875b8acbb7146e` on `main` (clean tree).
+The completed candidate-cost review is recorded below; no active plan remains.
 Always inspect live Git status/HEAD and active plans; this baseline is not a pin.
 
 Universal Source defines a portable content-source/host contract for independent
@@ -38,9 +38,11 @@ These are the working constraints of the proposed binding, not RFC acceptance.
 - **Authority:** explicit invocation-scoped capabilities, no ambient OS/network/
   filesystem authority; exact services remain separate work
   ([RFC §8](../spec/rfcs/0001-javascript-execution-binding.md#8-host-capability-injection-and-ownership)).
-- **Candidate, not selection:** QuickJS-NG/rquickjs remains strongest-evidenced.
-  Consolidated Outcome A means continue toward selection; public-API follow-up
-  Outcome B leaves resource closure open ([latest review](reviews/2026-09-30-quickjs-public-api-failure-classification.md#decision-and-only-next-task)).
+- **Candidate, not selection: Conditional continue.** Advance only to complete
+  patch-set maintenance acceptance before investing in other selection gates
+  ([candidate review](reviews/2026-09-30-quickjs-candidate-viability.md)). The actual
+  burden includes terminal semantics, permanent host policy, independent preflight
+  and audited binding ownership; the old narrow-patch cost model is insufficient.
 - **Conditional mechanisms:** RegExp needs pre-admission, not assumed compiler
   interruption; the async-stop patch is experiment-only, not an authorized
   maintained fork ([consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md)).
@@ -59,7 +61,7 @@ Statuses describe local feasibility evidence, not production conformance.
 | §6 value boundary | Experimental proof: class-gated, non-executing bidirectional transfer; exhaustion qualified below | [Complete values](reviews/2026-09-28-quickjs-complete-value-spike.md) |
 | RegExp admission | Viable with condition: literal preflight + trusted dynamic gate + protected native constructor | [Admission implementation](reviews/2026-09-29-quickjs-regexp-admission-impl-spike.md) |
 | Promise/async hard stop | Experimental proof for restricted profile, only with local patch | [Async fix](reviews/2026-09-29-quickjs-async-termination-fix-spike.md) |
-| Integrated resource/failure handling | Blocked: public API cannot make allocator/heap failures a trusted no-continuation class on this path | [Public-API Outcome B](reviews/2026-09-30-quickjs-public-api-failure-classification.md) |
+| Integrated resource/failure handling | Public-API configuration remains negative; engine-level terminal-OOM feasibility accepted as task premise, complete patched artifact/composition not audited at this HEAD | [Evidence boundary](reviews/2026-09-30-quickjs-candidate-viability.md#evidence-boundary-and-decision-basis) |
 | Platform embedding / production integration | Open / unimplemented | [Architecture](ARCHITECTURE.md) |
 
 ## 4. Known limitations / conditions
@@ -67,7 +69,12 @@ Statuses describe local feasibility evidence, not production conformance.
 - Native RegExp compilation does not poll on the pin; finite admission is a
   permanent candidate policy. Matching interruption is separately evidenced.
 - The last upstream assessment found no published async-stop fix; this is dated
-  evidence, not a live upstream check. The local fix is 12 edits / 11 functions.
+  evidence, not a live upstream check. The local async fix is 12 edits / 11
+  functions, about 40 added lines. This is not the total candidate patch size.
+- Terminal allocation/heap failure is engine-level feasible per the current task
+  premise. The checked-in evidence ends at public-API Outcome B: no corresponding
+  terminal-OOM patch/site audit is present. Its exact cost/provenance is an audit
+  gap, not a reason to repeat feasibility. See the candidate review above.
 - A trusted allocation latch prevents capability action/publication while
   catch/finally still run. Engine heap rejection bypasses that latch and can
   permit action/success. Public error marking is too late after host return and
@@ -83,37 +90,36 @@ Statuses describe local feasibility evidence, not production conformance.
 
 ## 5. Current pre-selection gates
 
-The [consolidated gate list](reviews/2026-09-29-consolidated-engine-feasibility.md#must-complete-before-an-engine-selection-adr)
-is qualified by the latest review and ROADMAP. None is closed by this index.
+The [candidate disposition](reviews/2026-09-30-quickjs-candidate-viability.md#conditions-and-selection-readiness-disposition)
+qualifies the prior consolidated gate list; ROADMAP owns sequencing. None is
+closed by this index.
 
 | Gate | Status | Remaining requirement |
 | --- | --- | --- |
-| Integrated resource/failure closure | **Blocked** | Public-API follow-up completed with Outcome B; engine-level experiment authorization decision next |
+| Integrated resource/failure closure | Open; feasibility premise accepted | Audit complete patched composition and residual resource coverage; do not repeat whether terminal OOM is fixable |
 | Complete module/path containment | Pending | Hostile graph/path proof, stable bytes and private module denial |
 | Final parser/preflight strategy | Pending | Full restricted ES2023 / early errors / admission agreement |
 | Cross-platform / Apple embedding | Pending | Same engine/binding/patch build and representative execution proof |
-| Patch ownership/update/integration | Pending | Reproducible provenance, ownership, security/update tests and upstream strategy |
+| Complete patch-set maintenance acceptance | **Only next gate** | Exact full artifact/site/provenance audit, accountable ownership, security/rebase procedure and upstream fallback |
 
 ## 6. Current task
 
-**Only next coherent task: allocation/heap terminal-failure experiment scope decision review.**
+**Completed: overall candidate-cost / selection-readiness review — Conditional continue.**
 
-- Public-API failure-classification spike: **completed, Outcome B**. See the
-  [review](reviews/2026-09-30-quickjs-public-api-failure-classification.md),
-  [experiment guide](../experiments/quickjs-integrated-resource-failure-spike/README.md)
-  and [completed plan](plans/completed/2026-09-30-quickjs-public-api-failure-classification.md).
-  Seven new tests plus the preserved 15 integrated tests pass; negative controls
-  remain reproducible. Passing diagnostic tests does not close the gate.
-- Next task status: **not started**, no active plan. Review only whether to
-  authorize a separately scoped engine-level allocation/heap terminal-failure
-  experiment, including minimum scope and acceptance criteria.
-- Minimal blocker: trusted allocator notification does not stop catch dispatch;
-  engine heap rejection has no trusted public hit hook. Error allocation can
-  itself fail. The existing async patch propagates already-uncatchable errors
-  but does not create this terminal classification.
-- No new patch implementation is authorized by this handoff. Do not expand into
-  other gates, production, contract amendment, engine selection, alternative
-  engines, helper-process/IPC design or patch ownership.
+- [Review](reviews/2026-09-30-quickjs-candidate-viability.md) and
+  [completed plan](plans/completed/2026-09-30-quickjs-candidate-viability.md).
+- QuickJS is worth retaining for one bounded maintenance decision, not default
+  progression through technical gates. Terminal-OOM feasibility is a premise;
+  maintainability and selection readiness do not follow from it.
+- **Only next task: complete patch-set maintenance acceptance review.** Audit the
+  already-proved terminal-OOM artifact with the async patch, obtain explicit
+  maintainer/reviewer acceptance and establish the security/rebase/upstream and
+  single-engine qualification strategy. No new patch or OOM experiment.
+- Next task is **not started**. If ownership or a bounded maintainable patch set
+  cannot be established, reconsider at whole-candidate architecture cost level;
+  no alternative-engine experiment or IPC design is authorized.
+- No other selection gate, production runtime, engine ADR or RFC acceptance is
+  authorized by this handoff.
 
 ## 7. Do not do
 
@@ -138,7 +144,8 @@ are historical handoffs; use the current ROADMAP for today's sequence.
 | Hardening / ambient authority | [Global surface](reviews/2026-09-28-quickjs-global-surface-spike.md) + [compiler denial](reviews/2026-09-28-quickjs-dynamic-code-suppression-spike.md) |
 | RegExp | [Admission implementation](reviews/2026-09-29-quickjs-regexp-admission-impl-spike.md) + [integrated qualification](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) |
 | Async termination | [Async fix](reviews/2026-09-29-quickjs-async-termination-fix-spike.md) + [integrated qualification](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) |
-| Engine selection / patch ownership / platform containment | [Consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md) + [latest review](reviews/2026-09-30-quickjs-public-api-failure-classification.md) |
+| Candidate viability / selection readiness / patch ownership | [Candidate-cost review](reviews/2026-09-30-quickjs-candidate-viability.md) + [async patch audit](reviews/2026-09-29-quickjs-async-termination-fix-spike.md) + [public-API boundary](reviews/2026-09-30-quickjs-public-api-failure-classification.md); locate the already-proved terminal-OOM artifact, follow component links only for an audit question |
+| Platform containment context | [Prior consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md) + [candidate disposition](reviews/2026-09-30-quickjs-candidate-viability.md#conditions-and-selection-readiness-disposition); historical platform observations are dated |
 | Declarative runtime / portable contracts | [Runtime guide](../runtime/README.md) + [spec index](../spec/README.md) + [ADR index](decisions/README.md) |
 
 ## 9. Validation expectations

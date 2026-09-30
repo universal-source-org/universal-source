@@ -23,7 +23,35 @@ Use [CURRENT_STATE](CURRENT_STATE.md) for the compact working-state index and ta
 
 The implemented runtime is a **static declarative loader, dispatcher and instance lifecycle**, selected under [ADR 0002](decisions/0002-reference-runtime-language.md). Independent Python manifest/fixture checks remain development tooling. Recognizing an engine name in a manifest does not mean the engine runs; JavaScript execution does not exist.
 
-The [consolidated feasibility review](reviews/2026-09-29-consolidated-engine-feasibility.md) records **Outcome A — continue QuickJS toward selection**, not an engine selection or maintained-fork authorization. The subsequent [integrated resource/failure spike](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) records **Outcome B**: the patched Rust path composes for tested hardening, admission, value transfer and retirement cases, but allocator rejection can still be caught by source and engine-heap rejection can precede the trusted allocator latch. The [public-API follow-up](reviews/2026-09-30-quickjs-public-api-failure-classification.md) confirms **Outcome B** with seven additional diagnostics: public error marking after return, heap-cap tuning and later polling cannot provide the required no-continuation boundary; engine heap OOM can permit capability action and success without a trusted latch. Ordinary/stack errors remain ordinary, and fresh-runtime retirement remains healthy. No new engine modification was made. Resource closure remains blocked pending a decision on a separately scoped engine-level failure experiment. Complete module/path and parser/preflight evidence, cross-platform/Apple embedding proof and an owned patch/update strategy also remain selection gates. No production integration or engine selection follows these results.
+The [candidate-cost review](reviews/2026-09-30-quickjs-candidate-viability.md)
+records **Conditional continue**: retain QuickJS-NG as a candidate and resolve
+complete patch-set maintenance acceptance before other selection investment.
+This qualifies the earlier [consolidated recommendation](reviews/2026-09-29-consolidated-engine-feasibility.md);
+it selects no engine or maintained fork. The candidate architecture entails
+engine-level async and allocation/heap terminal semantics, permanent RegExp admission and restricted
+runtime hardening, independent syntax/preflight validation, non-executing §6 FFI
+transfer, private module-capture ordering and explicit fresh-runtime retirement.
+These are coupled maintenance responsibilities, not a few engine options.
+
+The inspectable experimental engine modification remains the 12-edit async patch
+(about 40 added lines in 11 functions). The
+[integrated experiment](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md)
+and [public-API follow-up](reviews/2026-09-30-quickjs-public-api-failure-classification.md)
+retain Outcome B for allocation/heap failure on that configuration. Engine-level
+terminal-OOM feasibility is accepted as the current task premise, but its
+successful patch artifact/site audit is not in the reviewed HEAD; no exact
+combined patch size or composition qualification is asserted. No patch changed
+in this review. The intended candidate must include that additional maintenance
+responsibility; the old async diff cannot represent the total cost.
+
+Existing preflight experiments use Boa plus Oxc; neither is selected, and two
+parsers are not a committed architecture. Complete module/path and parser/edition
+coverage, remaining resource composition, cross-platform/Apple device embedding
+and patch ownership/security/update strategy remain selection gates. Only local
+Darwin arm64 execution is evidenced; integrated Rust sanitizer coverage remains
+unverified. Production JavaScript, platform bindings and a maintained release
+pipeline do not exist. RFC 0001 remains proposed. ROADMAP sequences the one next
+maintenance acceptance task; this architecture summary authorizes no integration.
 
 ## Contract boundaries that exist in the draft
 

@@ -152,12 +152,45 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-The [consolidated engine-feasibility review](reviews/2026-09-29-consolidated-engine-feasibility.md) records **Outcome A — continue QuickJS toward selection**. A narrow maintained async-termination patch and permanent RegExp admission policy are defensible with explicit ownership and upgrade audits; JSC, V8 and Boa offer no demonstrated better complete architecture. Current Apple ExtensionFoundation documentation makes system-managed containment plausible on newer mobile/TV OS versions, correcting the earlier blanket exclusion, without proving RFC termination or authorizing IPC. See the [completed plan](plans/completed/2026-09-29-consolidated-engine-feasibility.md).
+The [new candidate-cost review](reviews/2026-09-30-quickjs-candidate-viability.md)
+records **Conditional continue**, qualifying the earlier
+[consolidated Outcome A](reviews/2026-09-29-consolidated-engine-feasibility.md).
+QuickJS remains a candidate, but its cost model now includes both async terminal
+propagation and allocation/heap terminal semantics, permanent RegExp admission
+and runtime hardening, independent parser/preflight and an audited Rust/C binding.
+This is materially beyond a near-upstream engine with a few host policies.
 
-The [integrated resource/failure spike](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md) records **Outcome B**. The patched Rust path composes for the tested hardening, RegExp admission, value transfer, lifecycle retirement and fresh-runtime cases, but allocator rejection still permits source catch continuation and engine-heap rejection can precede the trusted allocator latch. Historical Promise-swallow and RegExp compiler blockers remain unchanged. That result motivated the public-API follow-up below; it did not close the gate.
+Terminal-OOM engine-level feasibility is accepted as the task premise, not
+reopened. At this review's HEAD, the checked-in evidence still ends at the
+[public-API Outcome B](reviews/2026-09-30-quickjs-public-api-failure-classification.md)
+and its [integrated predecessor](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md).
+The additional successful patch artifact/site audit is not present, so its exact
+size, provenance and combined scope are not independently established here. The
+old public-API negatives remain valid; they do not contradict feasibility of a
+new engine-level change. Do not treat the old 12-edit async patch as the entire
+candidate burden, or silently declare complete resource closure.
 
-The [public-API failure-classification follow-up](reviews/2026-09-30-quickjs-public-api-failure-classification.md) also records **Outcome B**. Seven new diagnostics (22 integrated tests total) show that allocator refusal retains a trusted host reason and suppresses capability action/publication, yet same-job catch/finally and Promise/async source continue. Engine heap rejection bypasses the allocator latch and can permit action and success. Public marking is value-local and too late after catch; the null OOM fallback cannot be marked. Ordinary exceptions and stack RangeError remain ordinary. Heap-cap tuning and later interrupt polling do not close this boundary; the engine and async patch are unchanged.
+**Only next coherent task: complete patch-set maintenance acceptance review.**
+Bring forward the existing ownership/update/integration selection gate before
+investing in module, parser or platform proofs. Review the already-proved
+terminal-OOM artifact together with the async patch; document exact combined
+scope/provenance, accountable maintainer/reviewer acceptance, security/rebase
+procedure, upstream strategy with non-acceptance fallback, and the single-engine
+build/regression qualification plan. The
+[review's acceptance bar](reviews/2026-09-30-quickjs-candidate-viability.md#only-next-task)
+defines the bounded result. This is not authorization to implement/expand patches
+or repeat terminal-OOM feasibility. That next task has not started.
 
-**Only next coherent task: a decision-only review of whether to authorize a separately scoped engine-level allocation/heap terminal-failure experiment, with its minimum scope and acceptance criteria.** No new patch implementation, other gate, alternative-engine evaluation, helper-process/IPC design, production integration or patch-ownership work is authorized by this handoff.
+If the maintenance condition cannot be satisfied, pause default QuickJS
+investment and reassess whole-candidate architecture costs under the unchanged
+RFC; do not automatically launch another engine experiment. Past investment and
+lack of alternative proof do not establish QuickJS value.
 
-A future pass would close the resource-composition gate only. Complete module/path containment, final parser/preflight strategy, multi-platform/Apple embedding feasibility and patch ownership/integration strategy must also precede an engine-selection ADR. Selection is not yet justified; no engine/parser, maintained fork, RFC acceptance or production integration is authorized. Host-service signatures, full conformance and optional containment implementation remain separate later work.
+Integrated resource/composition coverage, complete module/path containment, final
+parser/preflight strategy and cross-platform/Apple embedding remain open before
+an engine-selection ADR. Their implementation is not authorized by this handoff.
+No engine/parser, maintained fork, RFC acceptance or production integration is
+selected. Host-service signatures, full conformance and any optional containment
+implementation remain separate later work. Phase 3 stays active; the
+[completed plan](plans/completed/2026-09-30-quickjs-candidate-viability.md)
+records the documentation-only review and validation limits.
