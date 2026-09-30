@@ -152,45 +152,35 @@ Exit criteria:
 
 ## Recommended next coherent task
 
-The [new candidate-cost review](reviews/2026-09-30-quickjs-candidate-viability.md)
-records **Conditional continue**, qualifying the earlier
-[consolidated Outcome A](reviews/2026-09-29-consolidated-engine-feasibility.md).
-QuickJS remains a candidate, but its cost model now includes both async terminal
-propagation and allocation/heap terminal semantics, permanent RegExp admission
-and runtime hardening, independent parser/preflight and an audited Rust/C binding.
-This is materially beyond a near-upstream engine with a few host policies.
+The [complete patch-set maintenance review](reviews/2026-09-30-quickjs-maintenance-acceptance.md)
+records **Fail — maintenance acceptance is not established**. This resolves the
+condition in the [candidate-cost review](reviews/2026-09-30-quickjs-candidate-viability.md):
+QuickJS no longer receives default selection investment. It remains an option
+for comparison, not a selected or permanently rejected engine.
 
-Terminal-OOM engine-level feasibility is accepted as the task premise, not
-reopened. At this review's HEAD, the checked-in evidence still ends at the
-[public-API Outcome B](reviews/2026-09-30-quickjs-public-api-failure-classification.md)
-and its [integrated predecessor](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md).
-The additional successful patch artifact/site audit is not present, so its exact
-size, provenance and combined scope are not independently established here. The
-old public-API negatives remain valid; they do not contradict feasibility of a
-new engine-level change. Do not treat the old 12-edit async patch as the entire
-candidate burden, or silently declare complete resource closure.
+Terminal-OOM engine-level feasibility remains the task premise. The artifact
+audit identified only the original pin and async-only configuration across
+18 local engine copies. The known async subset changes one file, eleven
+functions and twelve sites (43 added / 4 removed lines); it cannot stand in for
+the absent complete terminal-failure set. No exact combined source-bound success
+is available, and no accountable maintenance/reviewer/security commitment is
+established. A required update/security/build procedure is now defined in the
+review, but writing it does not supply ownership or completed qualification.
 
-**Only next coherent task: complete patch-set maintenance acceptance review.**
-Bring forward the existing ownership/update/integration selection gate before
-investing in module, parser or platform proofs. Review the already-proved
-terminal-OOM artifact together with the async patch; document exact combined
-scope/provenance, accountable maintainer/reviewer acceptance, security/rebase
-procedure, upstream strategy with non-acceptance fallback, and the single-engine
-build/regression qualification plan. The
-[review's acceptance bar](reviews/2026-09-30-quickjs-candidate-viability.md#only-next-task)
-defines the bounded result. This is not authorization to implement/expand patches
-or repeat terminal-OOM feasibility. That next task has not started.
+**Only next coherent task: end-to-end candidate architecture cost comparison
+under the same RFC.** Compare full prospective termination/resource control,
+permanent host policies, preflight/parser consistency, binding complexity,
+platform qualification and sustainable ownership/security/update models. Reuse
+existing evidence and test oracles; keep unknowns explicit. Do not use sunk cost
+or missing alternative proof to make QuickJS the default again. The comparison
+has not started; no alternative engine is chosen by this gate failure.
 
-If the maintenance condition cannot be satisfied, pause default QuickJS
-investment and reassess whole-candidate architecture costs under the unchanged
-RFC; do not automatically launch another engine experiment. Past investment and
-lack of alternative proof do not establish QuickJS value.
-
-Integrated resource/composition coverage, complete module/path containment, final
-parser/preflight strategy and cross-platform/Apple embedding remain open before
-an engine-selection ADR. Their implementation is not authorized by this handoff.
-No engine/parser, maintained fork, RFC acceptance or production integration is
-selected. Host-service signatures, full conformance and any optional containment
-implementation remain separate later work. Phase 3 stays active; the
-[completed plan](plans/completed/2026-09-30-quickjs-candidate-viability.md)
-records the documentation-only review and validation limits.
+Do not start V8/JSC/Boa experiments, helper-process/IPC design, more QuickJS patch
+work, terminal-OOM feasibility, module/path containment, parser selection or
+Apple/cross-platform implementation from this handoff. Existing resource,
+module, parser and platform gates remain incomplete evidence for comparison,
+not authorization to resume the old sequence. No portable-contract relaxation,
+engine-selection ADR, maintained fork, RFC acceptance or production JS follows.
+Phase 3 stays active; [completed plan](plans/completed/2026-09-30-quickjs-maintenance-acceptance.md)
+records read-only artifact checks and documentation validation. Host-service
+profiles and full conformance remain separate later work.

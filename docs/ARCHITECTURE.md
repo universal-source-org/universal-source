@@ -23,35 +23,36 @@ Use [CURRENT_STATE](CURRENT_STATE.md) for the compact working-state index and ta
 
 The implemented runtime is a **static declarative loader, dispatcher and instance lifecycle**, selected under [ADR 0002](decisions/0002-reference-runtime-language.md). Independent Python manifest/fixture checks remain development tooling. Recognizing an engine name in a manifest does not mean the engine runs; JavaScript execution does not exist.
 
-The [candidate-cost review](reviews/2026-09-30-quickjs-candidate-viability.md)
-records **Conditional continue**: retain QuickJS-NG as a candidate and resolve
-complete patch-set maintenance acceptance before other selection investment.
-This qualifies the earlier [consolidated recommendation](reviews/2026-09-29-consolidated-engine-feasibility.md);
-it selects no engine or maintained fork. The candidate architecture entails
-engine-level async and allocation/heap terminal semantics, permanent RegExp admission and restricted
-runtime hardening, independent syntax/preflight validation, non-executing §6 FFI
-transfer, private module-capture ordering and explicit fresh-runtime retirement.
-These are coupled maintenance responsibilities, not a few engine options.
+The [maintenance acceptance review](reviews/2026-09-30-quickjs-maintenance-acceptance.md)
+records **Fail**: the complete terminal-failure patch artifact and its successful
+source-bound configuration are absent, and maintenance/security ownership has not
+been accepted. QuickJS has no default candidate status; it remains an option for
+the next architecture cost comparison. This resolves the earlier
+[candidate-cost condition](reviews/2026-09-30-quickjs-candidate-viability.md), without
+selecting or permanently rejecting an engine. The earlier
+[consolidated review](reviews/2026-09-29-consolidated-engine-feasibility.md) remains
+dated historical evidence, including its correction of Apple containment claims.
 
-The inspectable experimental engine modification remains the 12-edit async patch
-(about 40 added lines in 11 functions). The
-[integrated experiment](reviews/2026-09-30-quickjs-integrated-resource-failure-spike.md)
-and [public-API follow-up](reviews/2026-09-30-quickjs-public-api-failure-classification.md)
-retain Outcome B for allocation/heap failure on that configuration. Engine-level
-terminal-OOM feasibility is accepted as the current task premise, but its
-successful patch artifact/site audit is not in the reviewed HEAD; no exact
-combined patch size or composition qualification is asserted. No patch changed
-in this review. The intended candidate must include that additional maintenance
-responsibility; the old async diff cannot represent the total cost.
+The inspectable experimental modification is the async-only recipe: one engine
+file, eleven functions, twelve sites, 43 added / 4 removed lines. Thirty baseline
+C/header files match the installed pinned source; eighteen generated engine
+copies contain only baseline or async-only digests. Existing Rust archive/binary
+hashes match their records, but a mutable sys source directory and records written
+before tests are not a complete source-bound success attestation. Terminal-OOM
+feasibility remains a task premise; no implementing artifact or exact full-set
+scope is claimed. The public-API failure configuration remains negative, as
+recorded by the [follow-up](reviews/2026-09-30-quickjs-public-api-failure-classification.md).
 
-Existing preflight experiments use Boa plus Oxc; neither is selected, and two
-parsers are not a committed architecture. Complete module/path and parser/edition
-coverage, remaining resource composition, cross-platform/Apple device embedding
-and patch ownership/security/update strategy remain selection gates. Only local
-Darwin arm64 execution is evidenced; integrated Rust sanitizer coverage remains
-unverified. Production JavaScript, platform bindings and a maintained release
-pipeline do not exist. RFC 0001 remains proposed. ROADMAP sequences the one next
-maintenance acceptance task; this architecture summary authorizes no integration.
+The candidate would still need terminal failure creation and propagation,
+permanent RegExp admission/hardening, independent preflight, §6 native transfer,
+module capture/containment and explicit fresh-runtime retirement. Required
+ownership, rebase, security/upstream and build-qualification procedures are
+specified in the review; they are not an accepted operating team or release
+pipeline. Full resource composition, parser strategy, module containment,
+Rust integrated sanitizer coverage and cross-platform/Apple device proofs remain
+open. No experiment/patch changed in this review. Production JavaScript and
+platform bindings remain absent; RFC 0001 stays proposed. ROADMAP sequences the
+comparison only, not further engine integration.
 
 ## Contract boundaries that exist in the draft
 
